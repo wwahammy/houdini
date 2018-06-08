@@ -3,7 +3,7 @@ import * as React from 'react';
 import { observer } from 'mobx-react';
 import {InjectedIntlProps, injectIntl} from 'react-intl';
 import {Field, FieldDefinition} from "../../../../types/mobx-react-form";
-import {BasicField} from "../common/fields";
+import {AutocompleteField, BasicField} from "../common/fields";
 import {ThreeColumnFields, TwoColumnFields} from "../common/layout";
 import {Validations} from "../../lib/vjf_rules";
 
@@ -43,8 +43,8 @@ export const FieldDefinitions : Array<FieldDefinition> = [
   {
     name: 'state',
     label: 'registration.wizard.nonprofit.state',
-    type: 'text',
-    validators: [Validations.isFilled]
+    validators: [Validations.isFilled],
+    bindings: 'Autocomplete'
 
   },
   {
@@ -68,7 +68,8 @@ class NonprofitInfoForm extends React.Component<NonprofitInfoFormProps & Injecte
 
        <ThreeColumnFields>
          <BasicField field={this.props.form.$('city')}/>
-         <BasicField field={this.props.form.$('state')}/>
+         <AutocompleteField field={this.props.form.$('state')} items={[{name: 'wi'}, {name:"il"}]} />
+
          <BasicField field={this.props.form.$('zip')}/>
        </ThreeColumnFields>
        <button onClick={this.props.form.onSubmit} className="button" disabled={!this.props.form.isValid || this.props.form.submitting}>
