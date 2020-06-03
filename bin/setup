@@ -26,7 +26,7 @@ FileUtils.chdir APP_ROOT do
   system!('yarn -s')
 
 
-  if ARGV.length == 0 || (ARGV.length > 0 ARGV[0] != 'ci')
+  if ARGV.length == 0 || (ARGV.length > 0 && ARGV[0] != 'ci')
     puts "\n== Copying env file =="
     unless File.exist?('.env')
       FileUtils.cp '.env.template', '.env'
