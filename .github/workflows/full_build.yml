@@ -31,6 +31,7 @@ jobs:
             bin/rails notice:ruby:verify
   notice_js:
     runs-on: ubuntu-latest
+    needs: notice_ruby
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
