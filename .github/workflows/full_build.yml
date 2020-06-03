@@ -26,7 +26,7 @@ jobs:
           bundle config deployment true
           bundle config path vendor/bundle
           bundle install --jobs 4
-      - name: run noticeme
+      - name: run notice:ruby:verify
         run: |
             bin/rails notice:ruby:verify
   notice_js:
@@ -57,11 +57,11 @@ jobs:
           bundle install --jobs 4
       - name: install node packages
         run: yarn install --frozen-lockfile
-      - name: run noticeme
+      - name: run notice:js:verify
         run: |
             bin/rails notice:js:verify
   main_build:
-    needs: [notice_js, notice_ruby]
+    needs: [notice_js]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
