@@ -35,7 +35,7 @@ FileUtils.chdir APP_ROOT do
     File.write('.env', File.read('.env').gsub(/-- secret string --/) { SecureRandom.hex(64) })
   else
     puts "\n== Copying env file =="
-    FileUtils.cp '.env.test', '.env', force: true
+    FileUtils.cp '.env.test', '.env'
   end
 
   puts "\n== Preparing database =="
