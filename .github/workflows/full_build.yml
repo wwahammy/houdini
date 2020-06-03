@@ -61,7 +61,7 @@ jobs:
         run: |
             bin/rails notice:js:verify
   main_build:
-    needs: notice_me
+    needs: [notice_js, notice_ruby]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -100,13 +100,9 @@ jobs:
         key: bundle-use-node-js-${{ matrix.os }}-${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           bundle-use-node-js-${{ matrix.os }}-${{ matrix.node }}-
-    - name: install node packages
-      run: yarn install --frozen-lockfile
-    - name: copy test
-      run: cp .env.test .env
-    - name: Setup up dbrevious step installing the neces
+    - name: run setup
+      run: bin/setup ci
     - name: run spec
       run: bin/rails spec
     - name: run jest
       run: yarn jest
-  
