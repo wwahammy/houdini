@@ -22,7 +22,7 @@ namespace :notice do
         end
 
         desc "generating NOTICE-ruby from ClearlyDefined.io"
-        task :create do
+        task :update do
             result = get_notice_ruby
             File.write('NOTICE-ruby', result.body)
         end
@@ -30,7 +30,7 @@ namespace :notice do
         desc "checking whether NOTICE-ruby matches the one on ClearlyDefined.io"
         task :verify do
             result = get_notice_ruby
-            raise "NOTICE-ruby is not up to date. Run bin/rails notice:ruby:create to update the file." if result.body != File.read('NOTICE-ruby')
+            raise "NOTICE-ruby is not up to date. Run bin/rails notice:ruby:update to update the file." if result.body != File.read('NOTICE-ruby')
         end
     end
 
@@ -42,7 +42,7 @@ namespace :notice do
         end
 
         desc "generating NOTICE-js from ClearlyDefined.io"
-        task :create do
+        task :update do
             if (File.exists?('NOTICE'))
                 File.delete('NOTICE')
             end
@@ -53,7 +53,7 @@ namespace :notice do
         desc "checking whether NOTICE-js matches the one on ClearlyDefined.io"
         task :verify do
             result = get_notice_js
-            raise "NOTICE-js is not up to date. Run bin/rails notice:js:create to update the file." if result != File.read('NOTICE-js')
+            raise "NOTICE-js is not up to date. Run bin/rails notice:js:update to update the file." if result != File.read('NOTICE-js')
         end
     end
 end
