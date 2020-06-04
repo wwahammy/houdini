@@ -1,4 +1,4 @@
-name: Houdini
+name: Houdini build
 on:
   push:
     branches: [ rails-v6-to-master]
@@ -16,6 +16,7 @@ jobs:
       # uses: ruby/setup-ruby@v1
         uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
       - uses: actions/cache@v1
+        name: Use Gem cache
         with:
           path: vendor/bundle
           key: bundle-use-ruby-ubuntu-latest-2.6.6-${{ hashFiles('**/Gemfile.lock') }}
@@ -42,12 +43,14 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v1.4.2
       - uses: actions/cache@v1
+        name: Use Node package cache
         with:
           path: node_modules
           key: bundle-use-node-js-ubuntu-latest-12-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             bundle-use-node-js-ubuntu-latest-12-
       - uses: actions/cache@v1
+        name: Use Gem cache
         with:
           path: vendor/bundle
           key: bundle-use-ruby-ubuntu-latest-2.6.6-${{ hashFiles('**/Gemfile.lock') }}
@@ -87,6 +90,7 @@ jobs:
     - name: Setup Node.js environment
       uses: actions/setup-node@v1.4.2
     - uses: actions/cache@v1
+      name: Use Gem cache
       with:
         path: vendor/bundle
         key: bundle-use-ruby-${{ matrix.os }}-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile.lock') }}
@@ -98,6 +102,7 @@ jobs:
         bundle config path vendor/bundle
         bundle install --jobs 4
     - uses: actions/cache@v1
+      name: Use Node package cache
       with:
         path: node_modules
         key: bundle-use-node-js-${{ matrix.os }}-${{ matrix.node }}-${{ hashFiles('**/yarn.lock') }}
