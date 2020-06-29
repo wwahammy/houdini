@@ -1,6 +1,7 @@
 // License: LGPL-3.0-or-later
 // based upon https://github.com/davidkalosi/js-money
 import isFunction from 'lodash/isFunction';
+import drop from 'lodash/drop';
 
 const assertSameCurrency = function (left: Money, right: Money) {
 	if (left.currency !== right.currency)
@@ -267,5 +268,16 @@ export class Money {
 			amount: this.amount,
 			currency: this.currency
 		};
+	}
+}
+
+export class MoneyArray extends Array<Money> {
+	includes(valueToFind:Money|unknown, fromIndex=0):boolean {
+		if (valueToFind && valueToFind instanceof Money ) {
+			if (fromIndex >= this.length )
+				return false;
+			return drop(this, fromIndex).some(i => i.equals(valueToFind));
+		}
+		return false;
 	}
 }
