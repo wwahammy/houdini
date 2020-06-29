@@ -26,9 +26,8 @@
     "@storybook/addon-links": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
-    "@testing-library/jest-dom": "^5.11.1",
-    "@testing-library/react": "^10.4.7",
-    "@testing-library/react-hooks": "^3.3.0",
+    "@testing-library/jest-dom": "^5.11.0",
+    "@testing-library/react": "^10.4.3",
     "@types/activestorage": "^5.2.2",
     "@types/color": "^3.0.0",
     "@types/enzyme": "^3.1.9",
@@ -68,6 +67,7 @@
     "eslint-plugin-react-hooks": "^4.0.4",
     "fork-ts-checker-webpack-plugin": "^5.0.4",
     "jest": "^24.1.0",
+    "jest-environment-jsdom-fifteen": "^1.0.2",
     "jest-enzyme": "^7.0.1",
     "jsdom": "^11.10.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -161,7 +161,7 @@
     "websocket-extensions": "^0.1.4"
   },
   "jest": {
-    "testEnvironment": "enzyme",
+    "testEnvironment": "jest-environment-jsdom-fifteen",
     "testEnvironmentOptions": {
       "enzymeAdapter": "react16"
     },
