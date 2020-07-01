@@ -5,6 +5,7 @@ import * as React from "react";
 import MuiTextField from '@material-ui/core/TextField';
 import { fieldToTextField, TextFieldProps } from 'formik-material-ui';
 import { Money } from "../../common/money";
+import { useCustomIntl } from "../intl/CustomIntl";
 
 
 export interface ISerializeMoney {
@@ -31,7 +32,8 @@ export interface ISerializeMoneyOutput {
  */
 export function useSerializeMoney(inputAmount:Money,
 	setOutputAmount: (amount:Money) => unknown): ISerializeMoneyOutput {
-	const serializedAmount = new Intl.NumberFormat('en', {style: 'currency', 'currency': inputAmount.currency.toUpperCase()}).format(inputAmount.amount)
+	const intl = useCustomIntl();
+	const serializedAmount = intl.formatMoney(inputAmount);
 	const handleChange = React.useCallback((i:string) => {
 		let output:Money = Money.fromCents(0, inputAmount.currency);
 		if (i != "")
