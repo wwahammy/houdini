@@ -1,11 +1,11 @@
-
 // License: LGPL-3.0-or-later
 import * as React from "react";
 import { Grid, Button } from "@material-ui/core";
 import  MoneyTextField from './MoneyTextField';
 import { Money, MoneyArray } from "../../common/money";
 import { Field, Formik, Form } from 'formik';
-import {useIntl} from 'react-intl';
+import { useCustomIntl } from "../intl";
+
 
 
 interface IAmountPaneProps {
@@ -16,14 +16,14 @@ interface IAmountPaneProps {
 }
 
 /* pass in amount */
-/*  if amount is one of the selected options, we highlight */
+/*  if amount is one of the selprops.ected options, we highlight */
 /*  if amount is not, we also set customAmount */
 /* on submission
 /*  if customAmount is set, we setAmount from parent to customAmouhnt */
 /*  if not, we setAmount from amount */
 
 function AmountPane(props: IAmountPaneProps) : JSX.Element {
-	const intl = useIntl();
+	const intl = useCustomIntl();
 	return (
 		<Formik onSubmit={(values, formikBag) => {
 			if (values.amount instanceof Money)
@@ -47,7 +47,7 @@ function AmountPane(props: IAmountPaneProps) : JSX.Element {
 											formikProps.setFieldValue('amount', value);
 											formikProps.setFieldValue('customAmount', Money.fromCents(0, 'usd'));
 											formikProps.submitForm();
-										}}>${value.amount}</Button>
+										}}>{intl.formatMoney(value)}</Button>
 									</Grid>;
 								})}
 								<Grid item xs={8}>

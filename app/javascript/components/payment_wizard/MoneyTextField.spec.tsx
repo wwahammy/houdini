@@ -10,15 +10,16 @@ import MoneyTextField from './MoneyTextField';
 import { Field, Formik } from 'formik';
 import { Money } from '../../common/money';
 import { useState } from 'react';
+import { CustomIntlProvider } from '../intl';
 
 function FormikHandler(props:{input:Money}) {
 	const [money, setMoney] = useState(props.input);
-	return <>
+	return <CustomIntlProvider locale="en">
 		<div><span aria-label="amount">{money.amount}</span><span aria-label="currency">{money.currency}</span></div>
 		<Formik initialValues={{value: money }} onSubmit={(submitProps) => setMoney(submitProps.value)}>
 			<Field component={MoneyTextField} name="value" aria-label="field"/>
 		</Formik>
-	</>;
+	</CustomIntlProvider>;
 }
 
 describe('MoneyTextField', () => {
@@ -26,7 +27,7 @@ describe('MoneyTextField', () => {
 		expect.hasAssertions();
 		const result = render(<FormikHandler input={Money.fromCents({amount:800, currency:'usd'})}/>);
 		const field = result.container.querySelector("input[name=value]");
-		expect(field).toHaveValue("$8");
+		expect(field).toHaveValue("$8.00");
 		const amount = await result.findByLabelText('amount');
 		const currency = await result.findByLabelText('currency');
 
