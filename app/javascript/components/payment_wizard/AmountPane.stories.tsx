@@ -1,8 +1,8 @@
 // License: LGPL-3.0-or-later
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import AmountPane from '../components/payment_wizard/AmountPane';
-import { Money } from '../common/money';
+import AmountPane from './AmountPane';
+import { Money } from '../../common/money';
 
 export default { title: 'AmountPane' };
 
