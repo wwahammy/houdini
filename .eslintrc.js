@@ -48,6 +48,20 @@ tsxSettings['files'] = ['**/*.tsx'];
 tsxSettings['plugins'] = [...tsxSpec['plugins'], "react"];
 tsxSettings['extends'] = [...tsxSpec['extends'], "plugin:react/recommended"];
 
+const tsStories = _.cloneDeep(tsBase);
+tsStories['files'] = ['**/*.stories.ts'];
+// tsStories['rules'] = {
+// 	'@typescript-eslint/explicit-module-boundary-types': ["ignore"]
+// };
+
+const tsxStoriesSettings = _.cloneDeep(tsBase)
+tsxStoriesSettings['files'] = ['**/*.stories.tsx'];
+tsxStoriesSettings['plugins'] = [...tsxSpec['plugins'], "react"];
+tsxStoriesSettings['extends'] = [...tsxSpec['extends'], "plugin:react/recommended"];
+tsxStoriesSettings['rules'] = {
+	'@typescript-eslint/explicit-module-boundary-types': ["off"]
+};
+
 module.exports = {
 	root: true,
 	overrides: [
@@ -61,7 +75,8 @@ module.exports = {
 		tsSpec,
 		tsxSpec,
 		tsSettings,
-		tsxSettings
+		tsxSettings,
+		tsxStoriesSettings
 	],
 	"rules": {
 		"linebreak-style": [
