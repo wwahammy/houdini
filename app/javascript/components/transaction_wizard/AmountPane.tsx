@@ -3,16 +3,15 @@ import * as React from "react";
 import { Grid, Button } from "@material-ui/core";
 import  MoneyTextField from './MoneyTextField';
 import { Money, MoneyArray } from "../../common/money";
-import { Field, Formik, Form } from 'formik';
+import { Field, Formik, Form} from 'formik';
 import { useCustomIntl } from "../intl";
 
 
 
 interface IAmountPaneProps {
+	amount: Money
 	amountOptions: MoneyArray
-	currentAmount: Money | null
-	setAmount: (amount: Money) => void
-	setValid: (valid: boolean) => void
+	finish: (amount: Money) => void
 }
 
 /* pass in amount */
@@ -27,20 +26,20 @@ function AmountPane(props: IAmountPaneProps) : JSX.Element {
 	return (
 		<Formik onSubmit={(values, formikBag) => {
 			if (values.amount instanceof Money)
-				props.setAmount(values.amount);
+				props.finish(values.amount);
 			else
-				props.setAmount(Money.fromCents(parseFloat(values.amount), 'usd'));
+				props.finish(Money.fromCents(parseFloat(values.amount), 'usd'));
 			formikBag.setSubmitting(false);
 		}} initialValues={{
-			amount: props.currentAmount,
-			customAmount: props.amountOptions.includes(props.currentAmount) ? Money.fromCents(0, 'usd') : (props.currentAmount || Money.fromCents(0, 'usd'))
+			amount:props.amount,
+			customAmount: props.amountOptions.includes(props.amount) ? Money.fromCents(0, 'usd') : (props.amount || Money.fromCents(0, 'usd'))
 		}} enableReinitialize={true}
 		>
 			{(formikProps) => (
 				<Form>
-					<Grid container spacing={2}>
+					<Grid container spacing={5}>
 						<Grid item xs={12}>
-							<Grid container justify="center">
+							<Grid container justify="center" spacing={4}>
 								{props.amountOptions.map((value: Money) => {
 									return <Grid item xs={4} key={value.toJSON().amount}>
 										<Button variant={value.equals(formikProps.values.amount) ? "outlined" : "contained"} color="primary" onClick={() => {

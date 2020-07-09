@@ -1,8 +1,7 @@
 
 // License: LGPL-3.0-or-later
 import * as React from "react";
-import { Formik, Form } from "formik";
-import Grid from "@material-ui/core/Grid";
+
 import { Money } from "../../common/money";
 import AppBar from "@material-ui/core/AppBar";
 import Tab from "@material-ui/core/Tab";
@@ -10,8 +9,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { reaction } from "mobx";
+import { IPaymentMethodData } from "./types";
+import { loadStripe } from "@stripe/stripe-js";
 
+const stripePromise = loadStripe("pk_test_7o2KOUlDEz5wFr91SSbfVMXE00kfO0dxlh");
 interface TabPanelProps {
 	children?: React.ReactNode;
 	index: any;
@@ -38,28 +39,27 @@ function TabPanel(props: TabPanelProps) {
 	);
 }
 
-export interface IPaymentMethodData {
-	pmType:string;
+
+
+export interface IPaymentMethodProps {
+	paymentMethodData:Partial<IPaymentMethodData>
+	options?:any
+  finish:(i:IPaymentMethodData) => void
 }
 
-export interface IPaymentMethodProps<T extends IPaymentMethodData> {
-	paymentMethodData:Partial<T>
-  setPaymentMethodData:(i:T) => void
-}
 
 
-
-interface PaymentMethod {
+export interface PaymentDescriptionProps {
 	name:string
 	title:string
-	component:(props:IPaymentMethodProps<IPaymentMethodData>) => JSX.Element
+	component:(props:IPaymentMethodProps) => JSX.Element
 }
 
 interface IPaymentMethodPaneProps {
-	paymentMethods: Array<PaymentMethod>
+	paymentMethods: Array<PaymentDescriptionProps>
 	amount:Money
 	paymentMethodData: Partial<IPaymentMethodData>
-	setPaymentMethodProps:(methodData:IPaymentMethodData) => void;
+	finish:(methodData:IPaymentMethodData) => void;
 }
 
 function a11yProps(index: any) {
@@ -77,18 +77,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 function PaymentMethodPane(props:IPaymentMethodPaneProps) : JSX.Element {
-	const [value, setValue] = React.useState(0);
+	const [tab, setTab] = React.useState(0);
 	const classes = useStyles();
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-		setValue(newValue);
+	const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+		setTab(newValue);
 	};
 	return (
 		<div className={classes.root} >
 			<AppBar position="static" color="default">
 				<Tabs
-					value={value}
-					onChange={handleChange}
+					value={tab}
+					onChange={handleTabChange}
 					indicatorColor="primary"
 					textColor="primary"
 					variant="scrollable"
@@ -102,9 +102,11 @@ function PaymentMethodPane(props:IPaymentMethodPaneProps) : JSX.Element {
 				</Tabs>
 			</AppBar>
 			{props.paymentMethods.map((pm,index) => {
-				return <TabPanel value={value} 	index={index} key={pm.name}>
+				return <TabPanel value={tab} 	index={index} key={pm.name}>
 					{pm.component({paymentMethodData: props.paymentMethodData,
-						setPaymentMethodData:props.setPaymentMethodProps})}
+						finish:props.finish,
+						options:{stripePromise}
+					})}
 				</TabPanel>;
 			})}
 		</div>
