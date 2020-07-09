@@ -6,21 +6,22 @@ import {
 	CardNumberElement,
 	CardExpiryElement,
 	CardCvcElement,
-	CardNumberElementProps
+	CardElement
 } from '@stripe/react-stripe-js';
 import {StripeIbanElementOptions, StripeCardNumberElementOptions,
 	StripeCardCvcElementOptions,
 	StripeCardExpiryElementOptions,
-	StripeIbanElementChangeEvent,
-	StripeElementChangeEvent} from '@stripe/stripe-js';
+	StripeCardElementOptions,
+	StripeElementStyle} from '@stripe/stripe-js';
 import {StripeInput} from './StripeInput';
+import merge from 'lodash/merge';
 
-import { TextField, InputLabelProps, TextFieldProps as MuiTextFieldProps } from "@material-ui/core";
+import { TextField, InputLabelProps, TextFieldProps as MuiTextFieldProps, Theme } from "@material-ui/core";
+import { useTheme } from '@material-ui/core/styles';
 import { FunctionComponent } from 'react';
 import { fieldToTextField, TextFieldProps} from 'formik-material-ui';
-import { useCallback } from '@storybook/addons';
-import { format } from 'sinon';
 
+import "fontsource-roboto";
 interface IStripeTextFieldProps {
 	InputLabelProps?:Partial<InputLabelProps>,
 	InputProps?: any
@@ -32,11 +33,23 @@ interface IStripeTextFieldProps {
 	stripeElement: FunctionComponent<TElementProps>
  }
 
-function StripeTextField<TOptions extends Record<string, unknown>,
-	TElementProps extends ElementProps>(props:IElementIncludedTextFieldProps<TElementProps>) {
+function createDefaultStripeStyle(theme:Theme):{styles:StripeElementStyle}{
+	const ret:StripeElementStyle = {
+		base: {
+			color: theme.palette.text.primary,
+			fontFamily: theme.typography.fontFamily
+		}
+	};
+
+	return {styles: ret};
+}
+
+function StripeTextField<TElementProps extends ElementProps>(props:IElementIncludedTextFieldProps<TElementProps>) {
+	const theme = useTheme();
 	// eslint-disable-next-line react/prop-types
 	const { InputLabelProps, stripeElement, InputProps, options, ...other } = props;
-
+	// set default options
+	const workingOptions = merge(options ||  {}, createDefaultStripeStyle(theme));
 	return (
 		<TextField
 			fullWidth
@@ -48,7 +61,7 @@ function StripeTextField<TOptions extends Record<string, unknown>,
 				...InputProps,
 				inputProps: {
 					component: stripeElement,
-					options:options,
+					options:workingOptions,
 				},
 				inputComponent: StripeInput
 			}}
@@ -118,13 +131,24 @@ function StripeTextFieldCvc(props:{options:	StripeCardCvcElementOptions}  & MuiT
 export function FormikStripeIban(props:{options:StripeIbanElementOptions}  & TextFieldProps) :JSX.Element {
 	const textfieldProps =  fieldToTextField(props);
 
-	textfieldProps.onBlur = () => {props.form.handleBlur(props.field.name)};
-	textfieldProps.onChange = () => {}
-	const options = props.options
-	options.disabled = textfieldProps.disabled
-	
+	textfieldProps.onBlur = () => {props.form.handleBlur(props.field.name);};
+	textfieldProps.onChange = () => {};
+	const options = props.options;
+	options.disabled = textfieldProps.disabled;
 
 	return (<StripeIban {...textfieldProps} options={options}/>);
+}
+
+export function FormikStripeTextFieldCard(props:{options:StripeCardElementOptions}  & TextFieldProps) :JSX.Element {
+	const textfieldProps =  fieldToTextField(props);
+
+	textfieldProps.onBlur = () => {props.form.handleBlur(props.field.name)};
+	textfieldProps.onChange = () => {};
+	const options = props.options;
+	options.disabled = textfieldProps.disabled;
+
+
+	return (<StripeCard {...textfieldProps} options={options}/>);
 }
 
 
@@ -140,22 +164,16 @@ function StripeIban(props:IStripeTextFieldProps & {options:StripeIbanElementOpti
 StripeIban.defaultProps = {
 	InputLabelProps: {},
 	InputProps: {},
-};
+} as IStripeTextFieldProps & {options:StripeIbanElementOptions};
 
 
-function useStripeCallbacksToFormik(props: TextFieldProps) {
-	const textfieldProps = fieldToTextField(props);
-	const oldOnBlur = textfieldProps.onBlur;
-	const oldOnChange = textfieldProps.onChange;
-	const {form, field} = props;
-	const {name} = field;
-	const onBlur = useCallback(() => {
-		form.handleBlur(name);
-	}, [oldOnBlur, form, name]);
-
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	const onChange = useCallback((e:StripeElementChangeEvent) => {}, [oldOnChange ]);
-
-	return {onBlur, onChange, ...textfieldProps};
+function StripeCard(props:IStripeTextFieldProps & {options:StripeCardElementOptions}): JSX.Element {
+	return (
+		<StripeTextField
+			stripeElement={CardElement}
+			{...props}
+		/>);
 }
+
+
 
