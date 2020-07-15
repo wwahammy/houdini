@@ -5,16 +5,11 @@ import { makeStyles, Theme, createStyles, createMuiTheme, ThemeProvider, ThemeOp
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import { Formik, Form, useFormikContext } from "formik";
 import AmountPane from "./AmountPane";
-import { Money, MoneyArray } from "../../common/money";
+import { Money } from "../../common/money";
 import PaymentMethodPane from "./PaymentMethodPane";
-import StripeCard from "./payment_methods/stripe/StripeCard";
 import { TransactionParams, TransactionPageProps, IPaymentMethodData } from "./types";
-import { useControlled } from "@material-ui/core";
-import { useState } from "react";
 
 import "fontsource-roboto/latin-ext.css";
 
@@ -110,6 +105,7 @@ TransactionWizard.defaultProps = {
 	paymentMethods: []
 } as TransactionPageProps;
 
+
 function InnerTransactionWizard(props:TransactionPageProps) {
 	const formikContext = useFormikContext<IInitialValues>();
 	const classes = useStyles();
@@ -117,7 +113,7 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [completed, setCompleted] = React.useState<{ [k: number]: boolean }>({});
-	const [disabled, setDisabled] = React.useState<{ [k: number]: boolean }>({});
+	const [disabled] = React.useState<{ [k: number]: boolean }>({});
 	const steps = getSteps();
 
 	const totalSteps = () => {
@@ -146,25 +142,12 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 		setActiveStep(newActiveStep);
 	};
 
-	const handleBack = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep - 1);
-	};
 
 	const handleStep = (step: number) => () => {
 		setActiveStep(step);
 	};
 
-	const handleComplete = () => {
-		const newCompleted = completed;
-		newCompleted[activeStep] = true;
-		setCompleted(newCompleted);
-		handleNext();
-	};
 
-	const handleReset = () => {
-		setActiveStep(0);
-		setCompleted({});
-	};
 
 	const getStepContent = (step: number) => {
 		switch (step) {
