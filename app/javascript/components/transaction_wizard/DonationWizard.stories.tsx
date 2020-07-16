@@ -3,7 +3,7 @@ import * as React from 'react';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, boolean, number, array, color } from "@storybook/addon-knobs";
 import { Money } from '../../common/money';
-import TransactionWizard from '.';
+import DonationWizard from './DonationWizard';
 import { TransactionPageProps, Supporter, DonationInit } from './types';
 import { isInteger } from 'lodash';
 import { PaymentDescriptionProps } from './PaymentMethodPane';
@@ -90,5 +90,5 @@ export function paymentWizard() {
 	};
 
 
-	return <TransactionWizard {...props}/>;
+	return <DonationWizard {...props}/>;
 }

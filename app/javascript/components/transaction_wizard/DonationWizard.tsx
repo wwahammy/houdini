@@ -12,6 +12,7 @@ import PaymentMethodPane from "./PaymentMethodPane";
 import { TransactionParams, TransactionPageProps, IPaymentMethodData } from "./types";
 
 import "fontsource-roboto/latin-ext.css";
+import useSteps from "../hooks/useSteps";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -33,7 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function getSteps() {
-	return ['Amount', 'Complete'];
+	return [{key: 'amount', title:() => "Amount", component:(props: {transactionProps:TransactionPageProps, formikContext:any) => (<AmountPane amountOptions={transactionProps.transactionInit.data.amountOptions} amount={formikContext.values.amount} finish={(amount:Money) => {
+		formikContext.setFieldValue('amount', amount);
+		handleNext();
+	}}/>)}
 }
 
 
@@ -54,10 +58,14 @@ export function useWizardContext<T>():IWizardContext<T> {
 	return {values};
 }
 
+interface IStep {
+	title
+}
 
 
 
-function TransactionWizard(props: TransactionPageProps): JSX.Element {
+
+function DonationWizard(props: TransactionPageProps): JSX.Element {
 
 
 	const themeOptions:ThemeOptions = {};
@@ -86,7 +94,7 @@ function TransactionWizard(props: TransactionPageProps): JSX.Element {
 	);
 }
 
-TransactionWizard.defaultProps = {
+DonationWizard.defaultProps = {
 	nonprofit: {
 		id: 1,
 		name: "Fake name"
@@ -109,10 +117,10 @@ TransactionWizard.defaultProps = {
 function InnerTransactionWizard(props:TransactionPageProps) {
 	const formikContext = useFormikContext<IInitialValues>();
 	const classes = useStyles();
+	steps
+	useSteps({steps}
 
-
-	const [activeStep, setActiveStep] = React.useState(0);
-	const [completed, setCompleted] = React.useState<{ [k: number]: boolean }>({});
+	
 	const [disabled] = React.useState<{ [k: number]: boolean }>({});
 	const steps = getSteps();
 
@@ -190,4 +198,4 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 	</Form>);
 }
 
-export default TransactionWizard;
+export default DonationWizard;
