@@ -150,6 +150,7 @@
     "react-intl": "^4",
     "react-text-mask": "^5.3.0",
     "react-transition-group": "^2.9.0",
+    "react-use": "^15.3.2",
     "react_ujs": "^2.6.1",
     "snabbdom": "0.3.0",
     "snake-case": "2.1.0",

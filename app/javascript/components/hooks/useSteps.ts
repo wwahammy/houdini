@@ -8,6 +8,9 @@ import findLastIndex from 'lodash/findLastIndex';
 import hashLeftAntiJoin from '../../common/lodash-joins/hash/hashLeftAntiJoin';
 import hashRightAntiJoin from '../../common/lodash-joins/hash/hashRightAntiJoin';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function noop() {}
+
 export interface KeyedStep {
 	key: string;
 }
@@ -17,9 +20,9 @@ export interface KeyedStepMap<T = unknown> {
 }
 
 interface ReadonlyStepsState {
-	readonly activeStep?: number;
-	readonly completed?: KeyedStepMap<boolean>;
-	readonly disabled?: KeyedStepMap<boolean>;
+	readonly activeStep: number;
+	readonly completed: KeyedStepMap<boolean>;
+	readonly disabled: KeyedStepMap<boolean>;
 	/**
 	 * An internal copy of steps which only includes the key
 	 */
@@ -112,29 +115,38 @@ interface StepsInitOptions {
 }
 
 
-interface InputStepsState extends Readonly<InputStepsMethods> {
-	readonly steps: readonly KeyedStep[]
+interface InputStepsState<TStep extends KeyedStep=KeyedStep> extends Readonly<InputStepsMethods> {
+	readonly steps: readonly TStep[]
 }
 
 interface InputStepsMethods {
-	addStep: (step: KeyedStep, before?: number) => void
-	removeStep: (step: KeyedStep) => void
+	addStep?: (step: KeyedStep, before?: number) => void
+	removeStep?: (step: KeyedStep) => void
 }
 
 
 interface MutableStepsObject extends InputStepsMethods {
 	goto: (step: number) => void
+	handleGoto:(step:number) => () => void
 	back: () => void
+	handleBack: () => () => void
 	next: () => void
+	handleNext: () => () => void
 	first: () => void
+	handleFirst: () => () => void
 	last: () => void
+	handleLast: () => () => void
 	complete: (step: number) => void
+	handleComplete: (step:number) => () => void
 	uncomplete: (step: number) => void
+	handleUncomplete: (step:number) => () => void
 	disable: (step: number) => void
+	handleDisable: (step:number) => () => void
 	enable: (step: number) => void
+	handleEnable: (step:number) => () => void
 
 }
-type StepsObject = Readonly<MutableStepsObject> & Readonly<InputStepsState> & StepsInitOptions & { readonly steps: readonly KeyedStep[] }
+type StepsObject<TStep extends KeyedStep=KeyedStep> = Readonly<MutableStepsObject> & Readonly<InputStepsState<TStep>> & StepsInitOptions & { readonly steps: readonly TStep[] }
 
 type StepTypes = 'goto' | 'first' | 'last' | 'back' | 'next' | 'complete' | 'uncomplete' | 'disable' | 'enable' | 'stepsChanged'
 
@@ -222,7 +234,7 @@ function stepsReducer(state: ReadonlyStepsState, args: StepAction): ReadonlyStep
 	}
 }
 
-export default function useSteps(state: InputStepsState, initOptions: StepsInitOptions = {}): StepsObject {
+export default function useSteps<TStep extends KeyedStep = KeyedStep>(state: InputStepsState<TStep>, initOptions: StepsInitOptions = {}): StepsObject<TStep> {
 
 	const activeStep = initOptions.activeStep || 0;
 
@@ -242,37 +254,74 @@ export default function useSteps(state: InputStepsState, initOptions: StepsInitO
 		dispatch({ type: "goto", payload: step });
 	}, []);
 
+	const handleGoto = useCallback((step: number | string) => {
+		return () => goto(step);
+	}, [goto]);
+
 	const back = useCallback(() => {
 		dispatch({ type: 'back' });
 	}, []);
+
+	const handleBack = useCallback(() => {
+		return () => back();
+	}, [back]);
 
 	const next = useCallback(() => {
 		dispatch({ type: 'next' });
 	}, []);
 
+	const handleNext = useCallback(() => {
+		return () => next();
+	}, [next]);
+
 	const first = useCallback(() => {
 		dispatch({ type: 'first' });
 	}, []);
+
+	const handleFirst = useCallback(() => {
+		return () => first();
+	}, [first]);
+
 
 	const last = useCallback(() => {
 		dispatch({ type: 'last' });
 	}, []);
 
+	const handleLast = useCallback(() => {
+		return () => last();
+	}, [last]);
+
 	const complete = useCallback((step: number) => {
 		dispatch({ type: "complete", payload: step });
 	}, []);
+
+	const handleComplete = useCallback((step: number ) => {
+		return () => complete(step);
+	}, [complete]);
 
 	const uncomplete = useCallback((step: number) => {
 		dispatch({ type: "uncomplete", payload: step });
 	}, []);
 
+	const handleUncomplete = useCallback((step: number ) => {
+		return () => uncomplete(step);
+	}, [uncomplete]);
+
 	const disable = useCallback((step: number) => {
 		dispatch({ type: "disable", payload: step });
 	}, []);
 
+	const handleDisable = useCallback((step: number ) => {
+		return () => disable(step);
+	}, [disable]);
+
 	const enable = useCallback((step: number) => {
 		dispatch({ type: "enable", payload: step });
 	}, []);
+
+	const handleEnable = useCallback((step: number ) => {
+		return () => enable(step);
+	}, [enable]);
 
 	useEffect(() => {
 		dispatch({ type: 'stepsChanged', payload: steps });
@@ -284,18 +333,25 @@ export default function useSteps(state: InputStepsState, initOptions: StepsInitO
 		steps,
 		...outputSteps,
 		goto,
+		handleGoto,
 		back,
+		handleBack,
 		next,
+		handleNext,
 		first,
+		handleFirst,
 		last,
+		handleLast,
 		complete,
+		handleComplete,
 		uncomplete,
+		handleUncomplete,
 		disable,
+		handleDisable,
 		enable,
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		addStep: () => { },
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		removeStep: () => { }
+		handleEnable,
+		addStep: state.addStep || noop,
+		removeStep: state.removeStep || noop
 	});
 
 }
