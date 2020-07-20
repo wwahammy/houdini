@@ -1,7 +1,7 @@
 
 // // License: LGPL-3.0-or-later
 import * as React from "react";
-// import { makeStyles, Theme, createStyles, createMuiTheme, ThemeProvider, ThemeOptions } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles, createMuiTheme, ThemeProvider, ThemeOptions } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
@@ -135,7 +135,7 @@ function AmountPaneWrapper(props: TransactionPageProps & { next: () => void }) {
 	}} />);
 }
 
-function PaymentMethodPaneWrapper(props: TransactionPageProps) {
+function PaymentMethodPaneWrapper(props: TransactionPageProps & { next: () => void }) {
 	const formikContext = useFormikContext<IInitialValues>();
 	return (<PaymentMethodPane amount={formikContext.values.amount}
 		paymentMethodData={formikContext.values.paymentMethod}
@@ -146,25 +146,45 @@ function PaymentMethodPaneWrapper(props: TransactionPageProps) {
 		}} />);
 }
 
-// 	return (<Form>
-// 		<div className={classes.root}>
-// 			<Stepper nonLinear activeStep={activeStep}>
-// 				{steps.map((label, index) => (
-// 					<Step key={label}>
-// 						<StepButton onClick={handleStep(index)} completed={completed[index]} disabled={disabled[index]}>
-// 							{label}
-// 						</StepButton>
-// 					</Step>
-// 				))}
-// 			</Stepper>
-// 			<div>
-// 				<div>
-// 					{getStepContent(activeStep)}
-// 				</div>
-// 			</div>
-// 		</div>
-// 	</Form>);
-// }
+const useInfoClasses = makeStyles((theme: Theme) => ({
+	root: {
+		flexGrow: 1,
+		width: '100%',
+		backgroundColor: theme.palette.background.paper,
+	},
+}));
+
+const useStepper = makeStyles((theme: Theme) => ({
+	root: {
+		paddingTop: 0,
+		paddingBottom: 0,
+		paddingLeft: '10px',
+		paddingRight: '10px'
+	},
+}));
+
+
+
+function InfoWrapper(props: TransactionPageProps & { next: () => void }) {
+	//const classes = useInfoClasses();
+	const classes = useInfoClasses();
+	return <div className={classes.root}>
+		<p>hoethwoteht</p>
+
+		<p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p><p>hoethwoteht</p>
+	</div>;
+}
+
+
+function Third(props: TransactionPageProps & { next: () => void }) {
+	//const classes = useInfoClasses();
+	const classes = useInfoClasses();
+	return <div className={classes.root}>
+		<p>hoethwoteht</p>
+
+		NOT!!!!
+	</div>;
+}
 
 function DonationWizard(props: TransactionPageProps): JSX.Element {
 
@@ -183,27 +203,41 @@ function DonationWizard(props: TransactionPageProps): JSX.Element {
 }
 
 function getSteps() {
-	return [{
-		key: 'amount',
-		label: 'Amount',
-		component: AmountPaneWrapper
-	},
-	{
-		key: 'payment',
-		label: 'Payment',
-		component: PaymentMethodPaneWrapper
-	}];
+	return [
+		{
+			key: 'address',
+			label: 'Info',
+			component: InfoWrapper
+		},
+		{
+			key: 'amount',
+			label: 'Amount',
+			component: AmountPaneWrapper
+		},
+		{
+			key: 'third',
+			label: 'another',
+			component: Third
+		},
+		{
+			key: 'payment',
+			label: 'Payment',
+			component: PaymentMethodPaneWrapper
+		},
+	];
 }
 
 function InnerDonationWizard(props: TransactionPageProps) {
-
-	const stepsState = useSteps({ steps: getSteps() });
-	return (<Form>
+	const steps = getSteps();
+	const stepsState = useSteps({ steps }, {disabled:{'info':false, amount: false, third:true, payment:true}});
+	const Component = getSteps()[stepsState.activeStep].component;
+	const stepRoot = useStepper();
+	return (<>
 		<NonprofitDialogHeader firstRow={props.nonprofit.name}>
-			<Stepper nonLinear activeStep={stepsState.activeStep}>
-				{stepsState.steps.map(({key,label}, index) => (
+			<Stepper nonLinear activeStep={stepsState.activeStep} classes={stepRoot}>
+				{stepsState.steps.map(({ key, label }, index) => (
 					<Step key={key}>
-						<StepButton onClick={stepsState.handleGoto(index)} completed={stepsState.completed[index]} disabled={stepsState.completed[index]}>
+						<StepButton onClick={stepsState.handleGoto(index)} completed={stepsState.completed[index]} disabled={stepsState.disabled[index]}>
 							{label}
 						</StepButton>
 					</Step>
@@ -211,9 +245,8 @@ function InnerDonationWizard(props: TransactionPageProps) {
 			</Stepper>
 		</NonprofitDialogHeader>
 		<DialogContent>
-			{getSteps()[stepsState.activeStep].component({...props, next: stepsState.next})}
-		</DialogContent>
-	</Form >);
+			<Component { ...props} next={stepsState.next }/>
+		</DialogContent></>);
 }
 
 export default DonationWizard;
