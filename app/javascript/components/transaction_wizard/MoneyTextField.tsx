@@ -6,16 +6,19 @@ import MuiTextField from '@material-ui/core/TextField';
 import { fieldToTextField, TextFieldProps } from 'formik-material-ui';
 import { Money } from "../../common/money";
 import { useCustomIntl } from "../intl/CustomIntl";
+import { FormikBag } from "formik";
+import { fromPairs } from "lodash";
+import { useState } from "react";
 
 
 export interface ISerializeMoney {
-    inputAmount:Money,
-    setOutputAmount: (amount:Money) => unknown
+		inputAmount:Money,
+		setOutputAmount: (amount:Money) => unknown
 }
 
 export interface ISerializeMoneyOutput {
-    serializedAmount:string,
-    handleChange: (i:string) => void
+		serializedAmount:string,
+		handleChange: (i:string) => void
 }
 
 /**
@@ -36,7 +39,7 @@ export function useSerializeMoney(inputAmount:Money,
 	const serializedAmount = intl.formatMoney(inputAmount);
 	const handleChange = React.useCallback((i:string) => {
 		let output:Money = Money.fromCents(0, inputAmount.currency);
-		if (i != "")
+		if (i != "" && !isNaN(parseFloat(i)))
 			output = Money.fromCents(parseFloat(i), inputAmount.currency);
 		setOutputAmount(output);
 	}, [setOutputAmount, inputAmount]);
@@ -44,9 +47,18 @@ export function useSerializeMoney(inputAmount:Money,
 }
 
 
-function MoneyTextField({ children, ...props }: TextFieldProps) : JSX.Element {
-	const { serializedAmount: amount, handleChange } = useSerializeMoney(props.field.value,
-		(i: Money) => props.form.setFieldValue(props.field.name, i));
+
+function MoneyTextField({ children, currency, ...props }: TextFieldProps & {currency: string}) : JSX.Element {
+	const currencyState = useState(currency);
+	const {form, field} = props;
+	const {name:fieldName} =  field;
+	const setFieldCallback = React.useCallback((i:Money) => {
+		if (i instanceof Money && !isNaN(i.amount)) {
+			form.setFieldValue(fieldName, i);
+		}
+	}, [form, fieldName]);
+
+	const { serializedAmount: amount, handleChange } = useSerializeMoney(props.field.value, setFieldCallback);
 
 	return <MuiTextField {...fieldToTextField(props)} value={amount}
 		onChange={(e: React.ChangeEvent<HTMLInputElement>) => { handleChange(e.target.value as string); }}>
