@@ -6,19 +6,19 @@ import MuiTextField from '@material-ui/core/TextField';
 import { fieldToTextField, TextFieldProps } from 'formik-material-ui';
 import { Money } from "../../common/money";
 import { useCustomIntl } from "../intl/CustomIntl";
-import { FormikBag } from "formik";
-import { fromPairs } from "lodash";
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+
+import {useI18nCurrencyInput} from '@houdiniproject/react-i18n-currency-input';
+import { UseI18nCurrencyInputProps } from "@houdiniproject/react-i18n-currency-input/dist/types";
+
+// export interface ISerializeMoneyOutput {
+// 		serializedAmount:string,
+// 		handleChange: (i:string) => void
+// }
 
 
-export interface ISerializeMoney {
-		inputAmount:Money,
-		setOutputAmount: (amount:Money) => unknown
-}
-
-export interface ISerializeMoneyOutput {
-		serializedAmount:string,
-		handleChange: (i:string) => void
+interface UseSerializeMoneyProps extends Omit<UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'> {
+	value:Money
 }
 
 /**
@@ -33,35 +33,47 @@ export interface ISerializeMoneyOutput {
  * @param inputAmount a Money object
  * @param setOutputAmount used for passing up output of the Hook
  */
-export function useSerializeMoney(inputAmount:Money,
-	setOutputAmount: (amount:Money) => unknown): ISerializeMoneyOutput {
+function useSerializeMoney(props:UseSerializeMoneyProps) : ReturnType<typeof useI18nCurrencyInput> {
 	const intl = useCustomIntl();
-	const serializedAmount = intl.formatMoney(inputAmount);
-	const handleChange = React.useCallback((i:string) => {
-		let output:Money = Money.fromCents(0, inputAmount.currency);
-		if (i != "" && !isNaN(parseFloat(i)))
-			output = Money.fromCents(parseFloat(i), inputAmount.currency);
-		setOutputAmount(output);
-	}, [setOutputAmount, inputAmount]);
-	return {serializedAmount, handleChange};
+	const {locale} = intl;
+	const {value, ...other} = props;
+	const {amount, currency} = value;
+
+	const i18n = useI18nCurrencyInput({...other, locale,
+		currency,
+		value:amount
+	});
+
+
+	return {...i18n};
 }
 
+type IMoneyTextFieldProps = Omit<TextFieldProps,'value'> &
+	Omit<UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'| 'inputRef'|'inputType'> &
+	{ value:Money };
+
+function MoneyTextField({ children, form, field, currencyDisplay, useGrouping, allowEmpty, selectAllOnFocus, ...props }:IMoneyTextFieldProps) : JSX.Element {
+	const {name:fieldName, value} =  field;
+
+	const inputRef = useRef<HTMLInputElement>();
+
+	const {currency} = value;
+
+	const { maskedValue, valueInCents,
+		onChange,
+		onFocus,
+		onMouseUp,
+		onSelect } = useSerializeMoney({ inputRef, value, currencyDisplay, useGrouping, allowEmpty, selectAllOnFocus});
+
+	useEffect(() => {
+
+		form.setFieldValue(fieldName, Money.fromCents(valueInCents, currency));
+
+	}, [fieldName, valueInCents, currency]);
 
 
-function MoneyTextField({ children, currency, ...props }: TextFieldProps & {currency: string}) : JSX.Element {
-	const currencyState = useState(currency);
-	const {form, field} = props;
-	const {name:fieldName} =  field;
-	const setFieldCallback = React.useCallback((i:Money) => {
-		if (i instanceof Money && !isNaN(i.amount)) {
-			form.setFieldValue(fieldName, i);
-		}
-	}, [form, fieldName]);
-
-	const { serializedAmount: amount, handleChange } = useSerializeMoney(props.field.value, setFieldCallback);
-
-	return <MuiTextField {...fieldToTextField(props)} value={amount}
-		onChange={(e: React.ChangeEvent<HTMLInputElement>) => { handleChange(e.target.value as string); }}>
+	return <MuiTextField {...fieldToTextField({form, field, ...props})} value={maskedValue}
+		onChange={onChange} onFocus={onFocus} onMouseUp={onMouseUp} onSelect={onSelect} inputRef={inputRef}>
 		{children}
 	</MuiTextField>;
 

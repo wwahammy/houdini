@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import { render, fireEvent, waitFor, screen } from '@testing-library/react';
+import { render, fireEvent, waitFor, screen, cleanup, act } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import MoneyTextField from './MoneyTextField';
 import { Field, Formik } from 'formik';
@@ -16,7 +16,7 @@ function FormikHandler(props: { input: Money }) {
 	const [money, setMoney] = useState(props.input);
 	return <CustomIntlProvider locale="en">
 		<div><span aria-label="amount">{money.amount}</span><span aria-label="currency">{money.currency}</span></div>
-		<Formik initialValues={{ value: money }} onSubmit={(submitProps) => setMoney(submitProps.value)}>
+		<Formik initialValues={{ value: money }} onSubmit={async (submitProps) => () => setMoney(submitProps.value)}>
 			<Field component={MoneyTextField} name="value" aria-label="field" />
 		</Formik>
 	</CustomIntlProvider>;
