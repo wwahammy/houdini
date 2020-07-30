@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function getSteps() {
-	return [{key: 'amount', title:() => "Amount", component:(props: {transactionProps:TransactionPageProps, formikContext:any) => (<AmountPane amountOptions={transactionProps.transactionInit.data.amountOptions} amount={formikContext.values.amount} finish={(amount:Money) => {
-		formikContext.setFieldValue('amount', amount);
-		handleNext();
-	}}/>)}
+	// return [{key: 'amount', title:() => "Amount", component:(props: {transactionProps:TransactionPageProps, formikContext:any) => (<AmountPane amountOptions={transactionProps.transactionInit.data.amountOptions} amount={formikContext.values.amount} finish={(amount:Money) => {
+	// 	formikContext.setFieldValue('amount', amount);
+	// 	handleNext();
+	// }}/>)}
 }
 
 
@@ -59,7 +59,7 @@ export function useWizardContext<T>():IWizardContext<T> {
 }
 
 interface IStep {
-	title
+	// title
 }
 
 
@@ -117,43 +117,43 @@ DonationWizard.defaultProps = {
 function InnerTransactionWizard(props:TransactionPageProps) {
 	const formikContext = useFormikContext<IInitialValues>();
 	const classes = useStyles();
-	steps
-	useSteps({steps}
 
-	
+	//useSteps({steps})
+
+
 	const [disabled] = React.useState<{ [k: number]: boolean }>({});
 	const steps = getSteps();
 
-	const totalSteps = () => {
-		return steps.length;
-	};
+	// const totalSteps = () => {
+	// 	return steps.length;
+	// };
 
-	const completedSteps = () => {
-		return Object.keys(completed).length;
-	};
+	// const completedSteps = () => {
+	// 	return Object.keys(completed).length;
+	// };
 
-	const isLastStep = () => {
-		return activeStep === totalSteps() - 1;
-	};
+	// const isLastStep = () => {
+	// 	return activeStep === totalSteps() - 1;
+	// };
 
-	const allStepsCompleted = () => {
-		return completedSteps() === totalSteps();
-	};
+	// const allStepsCompleted = () => {
+	// 	return completedSteps() === totalSteps();
+	// };
 
-	const handleNext = () => {
-		const newActiveStep =
-			isLastStep() && !allStepsCompleted()
-				? // It's the last step, but not all steps have been completed,
-				// find the first step that has been completed
-				steps.findIndex((step, i) => !(i in completed))
-				: activeStep + 1;
-		setActiveStep(newActiveStep);
-	};
+	// const handleNext = () => {
+	// 	const newActiveStep =
+	// 		isLastStep() && !allStepsCompleted()
+	// 			? // It's the last step, but not all steps have been completed,
+	// 			// find the first step that has been completed
+	// 			steps.findIndex((step, i) => !(i in completed))
+	// 			: activeStep + 1;
+	// 	setActiveStep(newActiveStep);
+	// };
 
 
-	const handleStep = (step: number) => () => {
-		setActiveStep(step);
-	};
+	// const handleStep = (step: number) => () => {
+	// 	setActiveStep(step);
+	// };
 
 
 
@@ -162,7 +162,7 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 			case 0:
 				return (<AmountPane amountOptions={props.transactionInit.data.amountOptions} amount={formikContext.values.amount} finish={(amount:Money) => {
 					formikContext.setFieldValue('amount', amount);
-					handleNext();
+					//handleNext();
 				}}/>);
 			case 1:
 				return (<PaymentMethodPane amount={formikContext.values.amount}
@@ -179,7 +179,7 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 
 
 	return (<Form>
-		<div className={classes.root}>
+		{/* <div className={classes.root}>
 			<Stepper nonLinear activeStep={activeStep}>
 				{steps.map((label, index) => (
 					<Step key={label}>
@@ -194,7 +194,7 @@ function InnerTransactionWizard(props:TransactionPageProps) {
 					{getStepContent(activeStep)}
 				</div>
 			</div>
-		</div>
+		</div> */}
 	</Form>);
 }
 

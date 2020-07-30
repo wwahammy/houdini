@@ -8,8 +8,7 @@ import { Money } from "../../common/money";
 import { useCustomIntl } from "../intl/CustomIntl";
 import { useEffect, useRef } from "react";
 
-import {useI18nCurrencyInput} from '@houdiniproject/react-i18n-currency-input';
-import { UseI18nCurrencyInputProps } from "@houdiniproject/react-i18n-currency-input/dist/types";
+import {useI18nCurrencyInput, Types} from '@houdiniproject/react-i18n-currency-input';
 
 // export interface ISerializeMoneyOutput {
 // 		serializedAmount:string,
@@ -17,7 +16,7 @@ import { UseI18nCurrencyInputProps } from "@houdiniproject/react-i18n-currency-i
 // }
 
 
-interface UseSerializeMoneyProps extends Omit<UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'> {
+interface UseSerializeMoneyProps extends Omit<Types.UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'> {
 	value:Money
 }
 
@@ -49,7 +48,7 @@ function useSerializeMoney(props:UseSerializeMoneyProps) : ReturnType<typeof use
 }
 
 type IMoneyTextFieldProps = Omit<TextFieldProps,'value'> &
-	Omit<UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'| 'inputRef'|'inputType'> &
+	Omit<Types.UseI18nCurrencyInputProps, 'currency' | 'locale'|'value'| 'inputRef'|'inputType'> &
 	{ value:Money };
 
 function MoneyTextField({ children, form, field, currencyDisplay, useGrouping, allowEmpty, selectAllOnFocus, ...props }:IMoneyTextFieldProps) : JSX.Element {
