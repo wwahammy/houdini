@@ -30,9 +30,10 @@ class Role < ApplicationRecord
   validates :name, inclusion: { in: Names }
   validates :host, presence: true, unless: %i[super_admin? super_associate?]
 
-  def name
-    super.to_sym
-end
+#   def name
+#     byebug
+#     super.to_sym
+# end
 
   def super_admin?
     name == :super_admin
