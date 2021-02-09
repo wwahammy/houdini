@@ -1558,6 +1558,41 @@ ALTER SEQUENCE public.nonprofits_id_seq OWNED BY public.nonprofits.id;
 
 
 --
+-- Name: object_event_hook_configs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.object_event_hook_configs (
+    id bigint NOT NULL,
+    webhook_service character varying,
+    configuration jsonb,
+    object_event_types text,
+    inbox character varying,
+    nonprofit_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: object_event_hook_configs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.object_event_hook_configs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: object_event_hook_configs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.object_event_hook_configs_id_seq OWNED BY public.object_event_hook_configs.id;
+
+
+--
 -- Name: offsite_payments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2655,6 +2690,13 @@ ALTER TABLE ONLY public.nonprofits ALTER COLUMN id SET DEFAULT nextval('public.n
 
 
 --
+-- Name: object_event_hook_configs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.object_event_hook_configs ALTER COLUMN id SET DEFAULT nextval('public.object_event_hook_configs_id_seq'::regclass);
+
+
+--
 -- Name: offsite_payments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3116,6 +3158,14 @@ ALTER TABLE ONLY public.nonprofits
 
 
 --
+-- Name: object_event_hook_configs object_event_hook_configs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.object_event_hook_configs
+    ADD CONSTRAINT object_event_hook_configs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: offsite_payments offsite_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3452,6 +3502,13 @@ CREATE INDEX index_modern_donations_on_donation_id ON public.modern_donations US
 
 
 --
+-- Name: index_object_event_hook_configs_on_nonprofit_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_event_hook_configs_on_nonprofit_id ON public.object_event_hook_configs USING btree (nonprofit_id);
+
+
+--
 -- Name: index_payments_on_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3765,6 +3822,14 @@ CREATE UNIQUE INDEX unique_schema_migrations ON public.schema_migrations USING b
 
 ALTER TABLE ONLY public.ticket_to_legacy_tickets
     ADD CONSTRAINT fk_rails_062cef70e7 FOREIGN KEY (ticket_id) REFERENCES public.tickets(id);
+
+
+--
+-- Name: object_event_hook_configs fk_rails_10d2fb51c8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.object_event_hook_configs
+    ADD CONSTRAINT fk_rails_10d2fb51c8 FOREIGN KEY (nonprofit_id) REFERENCES public.nonprofits(id);
 
 
 --
@@ -4314,9 +4379,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210122203303'),
 ('20210127193411'),
 ('20210128215402'),
+('20210204013426'),
 ('20210204172319'),
-('20210204174909'),
 ('20210204210627'),
-('20210204223643');
+('20210204223643'),
+('20210209002832');
 
 
