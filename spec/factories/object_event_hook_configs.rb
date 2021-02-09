@@ -4,7 +4,7 @@
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
 FactoryBot.define do
   factory :open_fn_config, class: ObjectEventHookConfig do
-    webhook_service { 'OpenFn' }
+    webhook_service { :open_fn }
     configuration { { 'x-api-key': 'my-secret-key' } }
     object_event_types { ['supporter.update'] }
     inbox { 'https://www.openfn.org/inbox/my-inbox-id' }

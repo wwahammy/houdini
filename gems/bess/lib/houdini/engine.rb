@@ -65,6 +65,8 @@ module Houdini
 
     config.houdini.listeners = []
 
+    config.houdini.webhook_adapters = [:open_fn]
+
 
     initializer 'houdini.set_configuration', before: 'factory_bot.set_fixture_replacement' do |app|
       app.config.to_prepare do

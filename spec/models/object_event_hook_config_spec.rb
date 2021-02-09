@@ -13,12 +13,21 @@ RSpec.describe ObjectEventHookConfig, type: :model do
 
     it 'returns an instance of OpenFn webhook' do
       webhook = double
-      expect(Houdini::WebhookAdapter::OpenFn)
+      expect(Houdini::WebhookAdapter::OpenFnAdapter)
         .to receive(:new)
         .with(url: @open_fn_config[:inbox], auth_headers: @open_fn_config[:configuration])
         .and_return(webhook)
       result = @open_fn_config.webhook
       expect(result).to eq(webhook)
+    end
+
+    it 'calls all the way through to a RestClient::Request.execute' do 
+      payload = {object: 'supporter.updated'}
+      expect(RestClient::Request).to receive(:execute).with(method: :post,
+        url: @open_fn_config[:inbox],
+        payload: payload,
+        headers: @open_fn_config[:configuration])
+      @open_fn_config.webhook.post(payload)
     end
   end
 end

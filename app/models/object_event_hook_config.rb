@@ -16,14 +16,8 @@ class ObjectEventHookConfig < ApplicationRecord
   validates :object_event_types, presence: true
   validates :inbox, presence: true
 
-  WEBHOOK = {
-    open_fn: 'OpenFn'
-  }.freeze
 
   def webhook
-    case webhook_service
-    when WEBHOOK[:open_fn]
-      Houdini::WebhookAdapter::OpenFn.new(url: inbox, auth_headers: configuration)
-    end
+    Houdini::WebhookAdapter.build(webhook_service, url: inbox, auth_headers:configuration)
   end
 end
