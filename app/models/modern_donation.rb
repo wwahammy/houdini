@@ -15,6 +15,7 @@ class ModernDonation < ApplicationRecord
     init_builder(*expand) do |json|
       json.(self, :designation)
 			json.object 'donation'
+			json.type 'trx_assignment'
 
 			json.dedication do
 				json.type dedication['type']

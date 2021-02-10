@@ -72,6 +72,7 @@ export interface HoudiniObject<ID extends IDType|HouID=IDType> {
 	object: string;
 }
 
+export type PolymorphicID<ID extends IDType|HouID=IDType> = HoudiniObject<ID>;
 
 type HoudiniObjectOfAllIDs = HoudiniObject<IDType> | HoudiniObject<HouID>;
 /**

@@ -15,6 +15,7 @@ describe InsertDonation do
     describe 'param validation' do
       before(:each) do
         expect(Houdini.event_publisher).to_not receive(:announce).with(:donation_created,any_args)
+        expect(Houdini.event_publisher).to_not receive(:announce).with(:transaction_created,any_args)
       end
       it 'does basic validation' do
         validation_basic_validation { InsertDonation.with_stripe(designation: 34_124, dedication: 35_141, event_id: 'bad', campaign_id: 'bad') }
@@ -87,6 +88,7 @@ describe InsertDonation do
 
     it 'charge returns failed' do
       expect(Houdini.event_publisher).to_not receive(:announce).with(:donation_created,any_args)
+      expect(Houdini.event_publisher).to_not receive(:announce).with(:transaction_created,any_args)
       handle_charge_failed { InsertDonation.with_stripe(amount: charge_amount, nonprofit_id: nonprofit.id, supporter_id: supporter.id, token: source_token.token) }
     end
 
@@ -95,6 +97,7 @@ describe InsertDonation do
         before_each_success
         allow(Houdini.event_publisher).to receive(:announce)
         expect(Houdini.event_publisher).to receive(:announce).with(:donation_created,any_args)
+        expect(Houdini.event_publisher).to receive(:announce).with(:transaction_created,any_args)
       end
       it 'process event donation' do
         process_event_donation { InsertDonation.with_stripe(amount: charge_amount, nonprofit_id: nonprofit.id, supporter_id: supporter.id, token: source_token.token, event_id: event.id, date: (Time.now + 1.day).to_s, dedication: {'type' => 'honor', 'name' => 'a name'}, designation: 'designation') }
@@ -145,7 +148,30 @@ describe InsertDonation do
   #   end
   # end
 
-  it '.offsite', pending: true do
-    raise
+  describe '.offsite' do
+    include_context :shared_rd_donation_value_context
+    describe 'failures' do
+      before(:each) do
+        expect(Houdini.event_publisher).to_not receive(:announce).with(:offsite_transaction_charge_created,any_args)
+        expect(Houdini.event_publisher).to_not receive(:announce).with(:offsite_transaction_created,any_args)
+        expect(Houdini.event_publisher).to_not receive(:announce).with(:donation_created,any_args)
+        expect(Houdini.event_publisher).to_not receive(:announce).with(:transaction_created,any_args)
+      end
+    end
+
+    describe 'success' do 
+      before(:each) do 
+        allow(Houdini.event_publisher).to receive(:announce)
+        expect(Houdini.event_publisher).to receive(:announce).with(:payment_created, any_args)
+        expect(Houdini.event_publisher).to receive(:announce).with(:offline_transaction_charge_created, any_args)
+        expect(Houdini.event_publisher).to receive(:announce).with(:offline_transaction_created, any_args)
+        expect(Houdini.event_publisher).to receive(:announce).with(:donation_created,any_args)
+        expect(Houdini.event_publisher).to receive(:announce).with(:transaction_created,any_args)
+      end
+
+      it 'general offsite create' do
+        result = InsertDonation.offsite({amount: charge_amount, nonprofit_id: nonprofit.id, supporter_id: supporter.id, date: (Time.now + 1.day).to_s}.with_indifferent_access)
+      end
+    end
   end
 end

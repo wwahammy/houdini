@@ -87,12 +87,10 @@ RSpec.describe ModernCampaignGift, type: :model do
       'supporter' => kind_of(Numeric),
       'nonprofit' => kind_of(Numeric),
       'transaction' => match_houid('trx'),
-      'deleted' => false
+      'deleted' => false,
+      'type' => 'trx_assignment'
     }
   end
-  
-
-  
 
   it 'announces created properly when called' do
     allow(Houdini.event_publisher).to receive(:announce)
