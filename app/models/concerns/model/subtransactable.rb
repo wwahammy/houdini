@@ -2,7 +2,7 @@
 
 # License: AGPL-3.0-or-later WITH WTO-AP-3.0-or-later
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
-module Model::TrxAssignable
+module Model::Subtransactable
 	extend ActiveSupport::Concern
 
 	included do
@@ -15,9 +15,13 @@ module Model::TrxAssignable
 		add_builder_expansion :trx, 
 			json_attrib: :transaction
 
-		has_one :transaction_assignment, as: :assignable
-		has_one :trx, through: :transaction_assignment, class_name: 'Transaction', foreign_key: 'transaction_id'
-		has_one :supporter, through: :trx
-		has_one :nonprofit, through: :trx
+		has_one :subtransaction, as: :subtransactable
+  	has_one :trx, through: :subtransaction
+  	has_one :supporter, through: :trx
+  	has_one :nonprofit, through: :trx
+
+		has_many :subtransaction_entities, through: :subtransaction
+
+		has_many :payments, through: :subtransaction
 	end
 end

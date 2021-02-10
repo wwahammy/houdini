@@ -7,12 +7,19 @@
 # If connected to an offsite_payment, this is money the nonprofit is recording for convenience.
 
 class Payment < ApplicationRecord
+  include Model::Jbuilder
+  include Model::Eventable
+
   # :towards,
   # :gross_amount,
   # :refund_total,
   # :fee_total,
   # :kind,
   # :date
+
+  add_builder_expansion :nonprofit, :supporter, :subtransaction_entity
+  add_builder_expansion :trx, 
+    json_attrib: :transaction
 
   belongs_to :supporter
   belongs_to :nonprofit
@@ -26,4 +33,20 @@ class Payment < ApplicationRecord
   has_many :events, through: :tickets
   has_many :payment_payouts
   has_many :charges
+
+  has_one :entity_to_payment_join
+  has_one :subtransaction_entity, through: :entity_to_payment_join
+
+  has_one :subtransaction, through: :subtransaction_entity
+  has_one :trx, through: :subtransaction_entity
+  
+
+
+  def to_builder(*expand)
+    init_builder(*expand) do |json|
+    end
+  end
+
+  def publish_created
+  end
 end

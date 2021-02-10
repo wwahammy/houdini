@@ -1,20 +1,13 @@
 // License: LGPL-3.0-or-later
-import type { HouID, HoudiniObject, HoudiniEvent, Amount, IdType} from '../../common';
-import type Nonprofit from '..';
+import type { HouID, HoudiniEvent, IDType } from '../../common';
 import type Campaign from '.';
 import type { CampaignGift } from '.';
-import Supporter from '../Supporter';
-import { Transaction } from '../Supporter';
+import type { TrxAssignment } from '../Transaction';
 
-
-export interface CampaignGiftPurchase extends HoudiniObject<HouID> {
-  amount: Amount;
-  campaign: IdType | Campaign;
+export interface CampaignGiftPurchase extends TrxAssignment {
+  campaign: IDType | Campaign;
   campaign_gifts: HouID[] | CampaignGift[];
-  nonprofit: IdType | Nonprofit;
   object: 'campaign_gift_purchase';
-  supporter: IdType | Supporter;
-  transaction: HouID | Transaction;
 }
 
 

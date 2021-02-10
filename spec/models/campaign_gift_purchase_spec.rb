@@ -131,7 +131,8 @@ RSpec.describe CampaignGiftPurchase, type: :model do
           'supporter' => supporter_builder_expanded,
           'nonprofit' => np_builder_expanded,
           'transaction' => transaction_builder_expanded,
-          'deleted' => false
+          'deleted' => false,
+          'type' => 'trx_assignment'
         }
       }
     })
@@ -158,7 +159,8 @@ RSpec.describe CampaignGiftPurchase, type: :model do
           'supporter' => supporter_builder_expanded,
           'nonprofit' => np_builder_expanded,
           'transaction' => transaction_builder_expanded,
-          'deleted' => false
+          'deleted' => false,
+          'type' => 'trx_assignment'
         }
       }
     })
@@ -185,7 +187,8 @@ RSpec.describe CampaignGiftPurchase, type: :model do
           'supporter' => supporter_builder_expanded,
           'nonprofit' => np_builder_expanded,
           'transaction' => transaction_builder_expanded,
-          'deleted' => true
+          'deleted' => true,
+          'type' => 'trx_assignment'
         }
       }
     })

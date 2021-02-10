@@ -7,7 +7,7 @@ class ModernCampaignGift < ApplicationRecord
   include Model::Jbuilder
   include Model::Eventable
 	setup_houid :cgift
-	
+
 	add_builder_expansion :nonprofit, :supporter, :campaign, :campaign_gift_option, :campaign_gift_purchase
   add_builder_expansion :trx, 
 		json_attrib: :transaction
@@ -42,6 +42,7 @@ class ModernCampaignGift < ApplicationRecord
 		init_builder(*expand) do |json|
 			json.(self, :deleted)
 			json.object 'campaign_gift'
+			
 			json.amount do
         json.value_in_cents amount
         json.currency nonprofit.currency

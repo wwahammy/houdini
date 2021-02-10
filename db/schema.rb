@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_09_181808) do
+ActiveRecord::Schema.define(version: 2021_02_14_203557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -343,6 +343,15 @@ ActiveRecord::Schema.define(version: 2021_02_09_181808) do
     t.boolean "notify_recurring_donations"
   end
 
+  create_table "entity_to_payment_joins", force: :cascade do |t|
+    t.string "subtransaction_entity_id"
+    t.bigint "payment_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["payment_id"], name: "index_entity_to_payment_joins_on_payment_id"
+    t.index ["subtransaction_entity_id"], name: "index_entity_to_payment_joins_on_subtransaction_entity_id"
+  end
+
   create_table "event_discounts", id: :serial, force: :cascade do |t|
     t.string "name", limit: 255
     t.string "code", limit: 255
@@ -585,6 +594,20 @@ ActiveRecord::Schema.define(version: 2021_02_09_181808) do
     t.index ["nonprofit_id"], name: "index_object_event_hook_configs_on_nonprofit_id"
   end
 
+  create_table "offline_transaction_charges", id: :string, force: :cascade do |t|
+    t.integer "amount", null: false
+    t.datetime "created", comment: "the moment that the subtransaction_entity was created. Could be earlier than created_at if the transaction was in the past."
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "offline_transactions", id: :string, force: :cascade do |t|
+    t.integer "amount", null: false
+    t.datetime "created", comment: "the moment that the subtransaction was created. Could be earlier than created_at if the transaction was in the past."
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "offsite_payments", id: :serial, force: :cascade do |t|
     t.integer "gross_amount"
     t.string "kind", limit: 255
@@ -755,6 +778,26 @@ ActiveRecord::Schema.define(version: 2021_02_09_181808) do
     t.index ["tokenizable_id", "tokenizable_type"], name: "index_source_tokens_on_tokenizable_id_and_tokenizable_type"
   end
 
+  create_table "subtransaction_entities", id: :string, force: :cascade do |t|
+    t.string "subtransaction_id"
+    t.string "entitiable_type"
+    t.string "entitiable_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entitiable_type", "entitiable_id"], name: "index_subtransaction_entities_on_entitiable"
+    t.index ["subtransaction_id"], name: "index_subtransaction_entities_on_subtransaction_id"
+  end
+
+  create_table "subtransactions", id: :string, force: :cascade do |t|
+    t.string "transaction_id", null: false
+    t.string "subtransactable_type", null: false
+    t.string "subtransactable_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["subtransactable_type", "subtransactable_id"], name: "index_subtransactions_on_subtransactable", unique: true
+    t.index ["transaction_id"], name: "index_subtransactions_on_transaction_id"
+  end
+
   create_table "supporter_notes", id: :serial, force: :cascade do |t|
     t.text "content"
     t.integer "supporter_id"
@@ -913,6 +956,7 @@ ActiveRecord::Schema.define(version: 2021_02_09_181808) do
     t.integer "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created", comment: "the moment that the offline_transaction was created. Could be earlier than created_at if the transaction was in the past."
     t.index ["supporter_id"], name: "index_transactions_on_supporter_id"
   end
 
@@ -956,9 +1000,13 @@ ActiveRecord::Schema.define(version: 2021_02_09_181808) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "campaign_gift_purchases", "campaigns"
+  add_foreign_key "entity_to_payment_joins", "payments"
+  add_foreign_key "entity_to_payment_joins", "subtransaction_entities"
   add_foreign_key "modern_campaign_gifts", "campaign_gift_purchases"
   add_foreign_key "modern_campaign_gifts", "campaign_gifts"
   add_foreign_key "object_event_hook_configs", "nonprofits"
+  add_foreign_key "subtransaction_entities", "subtransactions"
+  add_foreign_key "subtransactions", "transactions"
   add_foreign_key "ticket_purchases", "event_discounts"
   add_foreign_key "ticket_purchases", "events"
   add_foreign_key "ticket_to_legacy_tickets", "ticket_purchases"
