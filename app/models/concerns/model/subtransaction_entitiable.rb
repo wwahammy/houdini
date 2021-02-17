@@ -10,7 +10,7 @@ module Model::SubtransactionEntitiable
 		include Model::Jbuilder
 		include Model::Eventable
 
-		add_builder_expansion :nonprofit, :supporter, :payments
+		add_builder_expansion :nonprofit, :supporter
 
 		add_builder_expansion :trx, 
 			json_attrib: :transaction

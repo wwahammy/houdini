@@ -28,7 +28,7 @@ class OfflineTransaction < ApplicationRecord
 
 
 	def publish_created
-		Houdini.event_publisher.announce(:transaction_created, 
+		Houdini.event_publisher.announce(:offline_transaction_created, 
 			to_event('offline_transaction.created', :nonprofit, :trx, :supporter, :payments).attributes!)
 	end
 end

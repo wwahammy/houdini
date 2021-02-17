@@ -8,16 +8,20 @@ class OfflineTransactionCharge < ApplicationRecord
 
 	setup_houid :offtrxchrg
 
-	has_one :subtransactable_entity
-	has_many :payments, through: :subtransactable_entity
-
 	def to_builder(*expand)
 		init_builder(*expand) do  |json|
-		 
+			if expand.include? :payments 
+				json.payments payments do |py|
+					json.merge! py.to_builder
+				end
+			else
+				json.payments payments&.pluck(:id)
+			end
 		end
 	end
 
 	def publish_created
-
+		Houdini.event_publisher.announce(:offline_transaction_charge_created, 
+			to_event('offline_transaction_charge.created', :nonprofit, :trx, :supporter, :payments).attributes!)
 	end
 end

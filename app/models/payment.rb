@@ -17,7 +17,7 @@ class Payment < ApplicationRecord
   # :kind,
   # :date
 
-  add_builder_expansion :nonprofit, :supporter, :subtransaction_entity
+  add_builder_expansion :nonprofit, :supporter
   add_builder_expansion :trx, 
     json_attrib: :transaction
 
@@ -48,5 +48,7 @@ class Payment < ApplicationRecord
   end
 
   def publish_created
+    Houdini.event_publisher.announce(:payment_created, 
+			to_event('payment.created', :nonprofit, :trx, :supporter, :subtransaction_entity).attributes!)
   end
 end
