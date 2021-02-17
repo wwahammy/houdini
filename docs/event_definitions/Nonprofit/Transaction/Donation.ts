@@ -1,8 +1,5 @@
 // License: LGPL-3.0-or-later
-import type { Amount, IDType, HouID, HoudiniEvent } from "../../common";
-import type Nonprofit from '../';
-import type Supporter from "../Supporter";
-import type Transaction from './';
+import type { HoudiniEvent } from "../../common";
 import type { TrxAssignment } from './';
 
 interface Dedication {

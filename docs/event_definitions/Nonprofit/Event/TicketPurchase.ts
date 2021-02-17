@@ -1,5 +1,5 @@
 // License: LGPL-3.0-or-later
-import type { HouID, HoudiniEvent, Amount, IDType} from '../../common';
+import type { HouID, HoudiniEvent, IDType} from '../../common';
 import type Event from '.';
 import type { EventDiscount, Ticket } from '.';
 import type { TrxAssignment } from '../Transaction';

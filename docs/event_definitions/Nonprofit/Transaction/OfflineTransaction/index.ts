@@ -1,6 +1,6 @@
 // License: LGPL-3.0-or-later
 import type { IDType, HouID, HoudiniEvent, HoudiniObject, Amount } from "../../../common";
-import type Transaction from '..'
+import type Transaction from '..';
 import type { Subtransaction, Payment } from "..";
 import type { Charge, Refund, Dispute } from '.';
 import type Nonprofit from "../..";
@@ -14,22 +14,22 @@ export interface CommonOfflineTransactionEntity extends HoudiniObject<HouID> {
 	fees: Amount;
 	net_amount: Amount;
 	nonprofit: IDType | Nonprofit;
-	offline_transaction: HouID | OfflineTransaction
+	offline_transaction: HouID | OfflineTransaction;
 	payments: IDType | Payment;
+	status: string;
+	supporter: IDType | Supporter;
 	transaction: Transaction;
-	status: string
-	supporter: IDType | Supporter
 }
 
 export default interface OfflineTransaction extends Subtransaction {
-	charges: HouID[] | Charge[]
+	charges: HouID[] | Charge[];
 	deleted: boolean;
+	disputes: HouID[] | Dispute[];
 	object: 'offline_transaction';
 	payment_id?: string | null;
 	payment_type: 'check' | 'cash';
 	payments: IDType[] | Payment[];
 	refunds: HouID[] | Refund[];
-	disputes: HouID[] | Dispute[];
 }
 
 export type OfflineTransactionCreated = HoudiniEvent<'offline_transaction.created', OfflineTransaction>;

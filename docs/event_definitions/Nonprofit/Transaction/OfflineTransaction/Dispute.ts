@@ -1,6 +1,6 @@
 // License: LGPL-3.0-or-later
 import type { HoudiniEvent } from "../../../common";
-import type { CommonOfflineTransactionEntity } from '.'
+import type { CommonOfflineTransactionEntity } from '.';
 
 export interface Dispute extends CommonOfflineTransactionEntity {
 	object: 'offline_transaction_dispute';
