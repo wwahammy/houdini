@@ -70,7 +70,7 @@ These include:
 
 * PostgreSQL 12 (10 probably works)
 * NodeJS 14 (we require 14 because we want the full internationalization built-in)
-* Ruby 2.6.6 (NOTE: the default of Ruby 2.7.1 in Debian should
+* Ruby 2.7.2 (NOTE: the default of Ruby 2.7.1 in Debian should
 function but you will receive a ton of deprecation
 warnings from Ruby)
 
@@ -127,7 +127,7 @@ curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
 curl -sSL https://get.rvm.io | bash -s stable
 source $HOME/.rvm/scripts/rvm
 echo 'source "$HOME/.rvm/scripts/rvm"' >> ~/.bashrc
-rvm install 2.6.6 --disable-binary --with-jemalloc
+rvm install 2.7.2 --disable-binary --with-jemalloc
 ```
 
  Run the following command as the `postgres` user and then enter your houdini_user
