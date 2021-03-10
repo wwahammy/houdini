@@ -4,12 +4,12 @@
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
 class Role < ApplicationRecord
   Names = [
-    :super_admin, # global access
-    :super_associate,      # global access to everything except bank acct info
-    :nonprofit_admin,      # npo scoped access to everything
-    :nonprofit_associate,  # npo scoped access to everything except bank acct info
-    :campaign_editor,      # fundraising tools, without dashboard access
-    :event_editor          # //
+    'super_admin', # global access
+    'super_associate',      # global access to everything except bank acct info
+    'nonprofit_admin',      # npo scoped access to everything
+    'nonprofit_associate',  # npo scoped access to everything except bank acct info
+    'campaign_editor',      # fundraising tools, without dashboard access
+    'event_editor'          # //
   ].freeze
 
   # :name,
