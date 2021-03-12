@@ -1,6 +1,5 @@
 {
   "name": "Houdini",
-  "private": "true",
   "repository": {
     "type": "git",
     "url": "https://github.com/houdiniproject/houdini"
@@ -151,7 +150,7 @@
     "mobx": "^4.3.1",
     "mobx-react": "^5.4.3",
     "mobx-react-devtools": "^5.0.1",
-    "mobx-react-form": "github:houdiniproject/mobx-react-form#our_fix",
+    "mobx-react-form": "github:houdiniproject/mobx-react-form#wwahammy-patch-2",
     "mobx-utils": "^5.0.1",
     "moment": "^2.22.2",
     "moment-range": "2.2.0",
@@ -186,5 +185,8 @@
     "vvvview": "0.4.3",
     "websocket-extensions": "^0.1.4",
     "yup": "^0.29.3"
+  },
+  "resolutions": {
+    "mobx-react-form/upath": "1.1.0"
   }
 }

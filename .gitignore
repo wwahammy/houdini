@@ -79,3 +79,12 @@ app/javascript/i18n/locales
 
 # No package-lock.json file from npm
 package-lock.json
+
+# yarn 2 files to ignore
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
