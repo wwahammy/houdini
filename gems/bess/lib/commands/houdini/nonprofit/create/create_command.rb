@@ -35,27 +35,11 @@ module Houdini
 				say
 				require_application_and_environment!
 
-				result = sanitize_optional_fields(result)
+				creation_result = Houdini::NonprofitCreation.new(result, options).call
 
-				nonprofit = ::Nonprofit.new(result[:nonprofit].merge({ register_np_only: true }))
-				user = User.new(result[:user])
-				user.skip_confirmation! if options[:dont_confirm_admin]
-				roles = [Role.new(host: nonprofit, name: 'nonprofit_admin', user: user)]
-				roles << Role.new(host: nonprofit, name: 'super_admin', user: user) if options[:super_admin]
-
-				ActiveRecord::Base.transaction do
-					if user.save && nonprofit.save && roles.each(&:save)
-						say("Nonprofit #{nonprofit.id} successfully created.")
-					else
-						user.errors.full_messages.each { |i| say("Error creating user: #{i}") }
-						nonprofit.errors.full_messages.each { |i| say("Error creating nonprofit: #{i}") }
-						roles.each { |role| role.errors.full_messages.each { |i| say("Error creating role: #{i}") } }
-					end
+				creation_result[:messages].each do |msg|
+					say(msg)
 				end
-			end
-
-			private def sanitize_optional_fields(result)
-				result.transform_values! { |keys| keys.transform_values! { |value| value.empty? ? nil : value } }
 			end
 		end
 	end

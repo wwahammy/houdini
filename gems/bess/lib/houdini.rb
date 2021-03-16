@@ -12,6 +12,7 @@ module Houdini
   autoload :Intl
   autoload :PaymentProvider
   autoload :EventPublisher
+  autoload :NonprofitCreation
 
   mattr_accessor :intl, :maintenance, :ccs
 
