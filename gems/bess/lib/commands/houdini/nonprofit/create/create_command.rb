@@ -6,11 +6,11 @@ module Houdini
 			option :confirm_admin, default: true, type: :boolean, desc: "Require the nonprofit admin to be confirmed via email"
 
 			option :nonprofit_name, default: nil, desc: "Provide the nonprofit's name"
-			option :state_code, default: nil, desc: "Provide the nonprofit' state code"
+			option :state_code, default: nil, desc: "Provide the nonprofit's state code, e.g. WI for Wisconsin"
 			option :city, default: nil, desc: "Provide the nonprofit's city"
-			option :nonprofit_website, default: nil, desc: "[OPTIONAL] Provide the nonprofit public website"
-			option :nonprofit_email, default: nil, desc: "[OPTIONAL] Provide the nonprofit public email"
-			option :nonprofit_phone, default: nil, desc: "[OPTIONAL] Provide the nonprofit's admin's phone"
+			option :nonprofit_website, default: nil, desc: "[OPTIONAL] Provide the nonprofit's public website"
+			option :nonprofit_email, default: nil, desc: "[OPTIONAL] Provide the nonprofit's public email"
+			option :nonprofit_phone, default: nil, desc: "[OPTIONAL] Provide the nonprofit's public phone number"
 
 			option :user_name, default: nil, desc: "Provide the nonprofit's admin's name"
 			option :user_email, default: nil, desc: "Provide the nonprofit's admin's email address (It'll be used for logging in)"
