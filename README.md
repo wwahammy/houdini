@@ -184,12 +184,7 @@ Coverage report generated for RSpec to .../houdini/coverage. 10552 / 12716 LOC (
 The important thing to look for is that the number of
 failures is zero.
 
-#### Startup
-
-`bin/rails server`
-You can connect to your server at http://localhost:5000
-
-##### Nonprofit
+##### Creating your first nonprofits and user
 
 To create a nonprofit, use the command line to run the following command and fill in the questions with the required information:
 
@@ -215,9 +210,17 @@ Additionally, it is possible to provide arguments to fill in the fields for the 
       [--nonprofit-email=NONPROFIT_EMAIL]      # Provide the nonprofit public email
       [--user-name=USER_NAME]                  # Provide the nonprofit's admin's name
       [--user-email=USER_EMAIL]                # Provide the nonprofit's admin's email address (It'll be used for logging in)
-      [--user-phone=USER_PHONE]                # [OPTIONAL] Provide the nonprofit's admin's phone
+      [--user-phone=USER_PHONE]                # [OPTIONAL] Provide the nonprofit's 's phone
       [--user-password=USER_PASSWORD]          # Provide the nonprofit's admin's password
 ```
+
+You can use this in the future for creating additional nonprofits.
+#### Startup
+
+`bin/rails server`
+You can connect to your server at http://localhost:5000
+
+
 ##### Super admin
 
 There is a way to set your user as a super_admin. This role lets you access any of the nonprofits
