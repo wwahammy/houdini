@@ -7,34 +7,34 @@ require 'controllers/support/shared_user_context'
 # rubocop:disable RSpec/InstanceVariable
 # rubocop:disable RSpec/DescribeClass
 describe 'Maintenance Mode' do
-  page = 'http://commet'
-  token = 'thoathioa'
-  include_context :shared_user_context
+	page = 'http://commet'
+	token = 'thoathioa'
+	include_context :shared_user_context
 
-  describe SettingsController, type: :controller do
-    describe '(Settings is just a basic example controller)'
-    it 'not in maintenance mode' do
-      get :index
-      assert_response 302
-    end
+	describe SettingsController, type: :controller do
+		describe '(Settings is just a basic example controller)'
+		it 'not in maintenance mode' do
+			get :index
+			assert_response 302
+		end
 
-    describe 'in maintenance' do
-      before(:each) do
-        Houdini.maintenance = Houdini::Maintenance.new(active:true, token: token, page: page)
-      end
+		describe 'in maintenance' do
+			before do
+				Houdini.maintenance = Houdini::Maintenance.new(active: true, token: token, page: page)
+			end
 
-      it 'redirects for settings' do
-        get :index
-        assert_redirected_to page
-      end
+			it 'redirects for settings' do
+				get :index
+				assert_redirected_to page
+			end
 
-      it 'allows access to non-sign_in pages if youre logged in' do
-        sign_in user_as_np_associate
-        get :index
-        assert_response 200
-      end
-    end
-  end
+			it 'allows access to non-sign_in pages if youre logged in' do
+				sign_in user_as_np_associate
+				get :index
+				assert_response 200
+			end
+		end
+	end
 
 	describe Users::SessionsController, type: :controller do
 		after do
