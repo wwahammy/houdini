@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #
 # License: AGPL-3.0-or-later WITH WTO-AP-3.0-or-later
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
@@ -22,14 +23,16 @@ class Houdini::NonprofitCreation
 			else
 				result = { success: false, messages: [] }
 				@user.errors.full_messages.each { |i| result[:messages] << "Error creating user: #{i}" }
-				@nonprofit.errors.full_messages.each { |i| result[:messages]  << "Error creating nonprofit: #{i}" }
+				@nonprofit.errors.full_messages.each { |i| result[:messages] << "Error creating nonprofit: #{i}" }
 				roles.each { |role| role.errors.full_messages.each { |i| result[:messages] << "Error creating role: #{i}" } }
 			end
 		end
 		result
 	end
 
-	private def sanitize_optional_fields(result)
+	private
+
+	def sanitize_optional_fields(result)
 		result.transform_values! { |keys| keys.transform_values! { |value| value&.empty? ? nil : value } }
 	end
 end
