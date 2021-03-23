@@ -20,26 +20,13 @@ class Houdini::Nonprofit::CreateCommand < Rails::Command::Base
 
 	option :user_name, default: nil, desc: "Provide the nonprofit's admin's name"
 	option :user_email, default: nil,
-			desc: "Provide the nonprofit's admin's email address (It'll be used for logging in)"
+																					desc: "Provide the nonprofit's admin's email address (It'll be used for logging in)"
 	option :user_password, default: nil, desc: "Provide the nonprofit's admin's password"
 
 	def perform
 		result = {
-			nonprofit: {
-				name: options[:nonprofit_name] || ask("What is the nonprofit's name?"),
-				state_code: options[:state_code] || ask("What is the nonprofit's state?"),
-				city: options[:city] || ask("What is the nonprofit's city?"),
-				website: options[:nonprofit_website] || ask("[OPTIONAL] What is the nonprofit's public website?"),
-				email: options[:nonprofit_email] || ask("[OPTIONAL] What is the nonprofit's public e-mail?"),
-				phone: options[:nonprofit_phone] || ask("[OPTIONAL] What is your nonprofit's public phone number?")
-			},
-			user: {
-				name: options[:user_name] || ask("What is your nonprofit's admin's name?"),
-				email: options[:user_email] || ask(
-					"What is your nonprofit's admin's email address? (It'll be used for logging in)"
-				),
-				password: options[:user_password] || ask("What is the nonprofit's admin's password?", echo: false)
-			}
+			nonprofit: ask_for_nonprofit_information(options),
+			user: ask_for_user_information(options)
 		}
 		say
 		require_application_and_environment!
@@ -49,5 +36,28 @@ class Houdini::Nonprofit::CreateCommand < Rails::Command::Base
 		creation_result[:messages].each do |msg|
 			say(msg)
 		end
+	end
+
+	private
+
+	def ask_for_nonprofit_information(options)
+		{
+			name: options[:nonprofit_name] || ask("What is the nonprofit's name?"),
+			state_code: options[:state_code] || ask("What is the nonprofit's state?"),
+			city: options[:city] || ask("What is the nonprofit's city?"),
+			website: options[:nonprofit_website] || ask("[OPTIONAL] What is the nonprofit's public website?"),
+			email: options[:nonprofit_email] || ask("[OPTIONAL] What is the nonprofit's public e-mail?"),
+			phone: options[:nonprofit_phone] || ask("[OPTIONAL] What is your nonprofit's public phone number?")
+		}
+	end
+
+	def ask_for_user_information(options)
+		{
+			name: options[:user_name] || ask("What is your nonprofit's admin's name?"),
+			email: options[:user_email] || ask(
+				"What is your nonprofit's admin's email address? (It'll be used for logging in)"
+			),
+			password: options[:user_password] || ask("What is the nonprofit's admin's password?", echo: false)
+		}
 	end
 end
