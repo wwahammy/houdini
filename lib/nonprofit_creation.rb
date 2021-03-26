@@ -3,6 +3,8 @@
 #
 # License: AGPL-3.0-or-later WITH WTO-AP-3.0-or-later
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
+#
+# NOTE: this should be moved to bess when Nonprofit and wiki is
 class NonprofitCreation
 	def initialize(result, options = nil)
 		result = sanitize_optional_fields(result)
@@ -19,7 +21,7 @@ class NonprofitCreation
 			result = if @user.save && @nonprofit.save && roles.each(&:save)
 													{ success: true, messages: ["Nonprofit #{@nonprofit.id} successfully created."] }
 												else
-													restore_error_messages
+													retrieve_error_messages
 												end
 		end
 		result
@@ -30,7 +32,7 @@ class NonprofitCreation
 	def retrieve_error_messages
 		result = { success: false, messages: [] }
 		result = retrieve_user_error_messages(result)
-		result = retrive_nonprofit_error_messages(result)
+		result = retrieve_nonprofit_error_messages(result)
 		retrieve_roles_error_messages(result)
 	end
 
@@ -44,7 +46,7 @@ class NonprofitCreation
 		result
 	end
 
-	def restrive_roles_error_messages(result)
+	def retrieve_roles_error_messages(result)
 		roles.each { |role| role.errors.full_messages.each { |i| result[:messages] << "Error creating role: #{i}" } }
 		result
 	end
