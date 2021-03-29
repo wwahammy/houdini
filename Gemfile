@@ -69,6 +69,7 @@ group :development, :ci, :test do
   gem 'rubocop-rails', '~> 2.9'
   gem 'rubocop-rake', '~> 0.5.1'
   gem 'rubocop-rspec', '~> 2.2'
+  gem 'sqlite3'
 end
 
 group :ci, :test do
@@ -95,3 +96,4 @@ end
 gem 'bess', path: 'gems/bess'
 
 gem 'houdini_full_contact', path: 'gems/houdini_full_contact'
+gem "validate_url"

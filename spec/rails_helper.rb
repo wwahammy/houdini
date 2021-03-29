@@ -14,7 +14,9 @@ require 'devise'
 require 'support/factory_bot'
 require 'timecop'
 require 'support/contexts'
+require_relative './support/in_memory_database_helpers'
 include Expect
+include InMemoryDatabaseHelpers
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end

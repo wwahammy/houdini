@@ -99,7 +99,7 @@ class Nonprofit < ApplicationRecord
   validates :city, presence: true
   validates :state_code, presence: true
   validates_format_of :email,  with: Email::Regex, allow_nil: true
-  validates_format_of :website, with: URI.regexp(['https', 'http']), allow_nil: true
+  validates_url :website, allow_blank: true, allow_nil: true
   validates_presence_of :slug
   validates_uniqueness_of :slug, scope: %i[city_slug state_code_slug]
 
@@ -137,7 +137,6 @@ class Nonprofit < ApplicationRecord
 
   serialize :achievements, Array
   serialize :categories, Array
-
 
 
   before_validation(on: :create) do

@@ -144,7 +144,7 @@ RSpec.describe Nonprofit, type: :model do
       end
 
       it 'marks website as having errors if they do' do 
-        expect(nonprofit_with_bad_email_and_website.errors['website'].first).to match /.*invalid.*/
+        expect(nonprofit_with_bad_email_and_website.errors['website'].first).to match /.*not a valid URL.*/
       end
 
       it 'marks an nonprofit as invalid when no slug could be created ' do
