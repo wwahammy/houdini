@@ -2,10 +2,10 @@
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE -%>
 <% content_for :title, t("login.header") %>
 <% content_for :javascripts do %>
-  <%= javascript_pack_tag 'i18n', 'application' %>
+  <%= javascript_pack_tag 'i18n' %>
 <% end %>
 <% content_for :stylesheets do %>
   <%= stylesheet_link_tag 'users/page' %>
 <% end %>
 
-<%= react_component('SessionLoginPage', {}) %>
+<%= react_component('SessionLoginPage', props:{}) %>
