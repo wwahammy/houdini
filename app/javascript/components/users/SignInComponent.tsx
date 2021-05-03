@@ -195,7 +195,12 @@ function SignInComponent(props: SignInComponentProps): JSX.Element {
 						<div data-testid="errorTest">
 							<Box display="flex" justifyContent="center" alignItems="center">
 								{componentState === 'submitting' ? "" : <>
-									{failed ? lastSignInAttemptError.data.error.map((error) => (<Alert aria-labelledby="errorTest" severity="error" key={error}>{error}</Alert>)) : ""}
+									{failed ? (lastSignInAttemptError.data ? (
+										lastSignInAttemptError.data.error instanceof Array ?
+											lastSignInAttemptError.data.error.map((error) => (<Alert aria-labelledby="errorTest" severity="error" key={error}>{error}</Alert>)) :
+											<Alert aria-labelledby="errorTest" severity="error" key={lastSignInAttemptError.data.error}>{lastSignInAttemptError.data.error}</Alert>):
+										(<Alert aria-labelledby="errorTest" severity="error" key={'unknownerror'}>An unknown error occurred</Alert>))
+										: ""}
 								</>
 								}
 							</Box>

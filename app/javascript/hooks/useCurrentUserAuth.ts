@@ -1,8 +1,8 @@
 // License: LGPL-3.0-or-later
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import useCurrentUser, {CurrentUser, SetCurrentUserReturnType} from "./useCurrentUser";
 import {postSignIn} from '../api/users';
-import { SignInError } from "../legacy_react/src/lib/api/errors";
+import { NetworkError } from "../api/errors";
 
 export interface UseCurrentUserAuthReturnType {
 	/**
@@ -35,7 +35,7 @@ export interface UseCurrentUserAuthReturnType {
 	 * @type {SignInError}
 	 * @memberof UseCurrentUserAuthReturnType
 	 */
-	lastSignInAttemptError?: SignInError;
+	lastSignInAttemptError?: NetworkError;
 
 	/**
 	 * Sign in the user with the provided credentials. Promise that results
@@ -84,8 +84,7 @@ export default function useCurrentUserAuth() : UseCurrentUserAuthReturnType {
 		error:lastGetCurrentUserError,
 		validatingCurrentUser} = useCurrentUser<SetCurrentUserReturnType>();
 	const [submitting, setSubmitting] = useState(false);
-	const [lastSignInAttemptError, setLastSignInAttemptError] = useState<SignInError|null>(undefined);
-	const [failed, setFailed] = useState<boolean>(false);
+	const [lastSignInAttemptError, setLastSignInAttemptError] = useState<NetworkError|undefined>(undefined);
 
 	const signIn = useCallback(async ({email, password}:{email:string, password:string}): Promise<CurrentUser> => {
 		try {
@@ -95,7 +94,7 @@ export default function useCurrentUserAuth() : UseCurrentUserAuthReturnType {
 			return user;
 		}
 		catch(e:unknown) {
-			const error = e as SignInError;
+			const error = e as NetworkError;
 			setLastSignInAttemptError(error);
 			throw error;
 		}
@@ -105,16 +104,12 @@ export default function useCurrentUserAuth() : UseCurrentUserAuthReturnType {
 		}
 	}, [setSubmitting, revalidate, setLastSignInAttemptError]);
 
-	useEffect(() => {
-		setFailed(!!lastSignInAttemptError);
-	}, [lastSignInAttemptError]);
-
 	return {
 		currentUser,
 		submitting,
 		lastGetCurrentUserError,
 		lastSignInAttemptError,
-		failed,
+		failed: !!lastSignInAttemptError,
 		signedIn,
 		signIn,
 		validatingCurrentUser,

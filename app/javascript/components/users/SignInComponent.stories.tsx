@@ -2,14 +2,12 @@ import * as React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import SignInComponent from './SignInComponent';
-//jest.mock('../../api/api/users');
-// jest.mock('../../api/users');
-import { InitialCurrentUserContext } from '../../hooks/useCurrentUser';
+import { rest } from 'msw';
+import { InitialCurrentUserContext, NOT_LOGGED_IN_STATUS } from '../../hooks/useCurrentUser';
 import { SWRConfig } from 'swr';
-import { mocked } from "ts-jest/utils";
-import {postSignIn} from '../../api/users';
-import {getCurrent} from '../../api/api/users';
-import { NetworkError } from '../../api/errors';
+import {postSignInRoute} from '../../api/users';
+import {getCurrentRoute} from '../../api/api/users';
+import { UserPresignedIn, UserSignsInOnFirstAttempt } from './tests/msw';
 
 
 function SWRWrapper(props:React.PropsWithChildren<unknown>) {
@@ -22,26 +20,10 @@ function SWRWrapper(props:React.PropsWithChildren<unknown>) {
 	</SWRConfig>;
 }
 
-const optionsToSignInError:Record<string, { data?: { error: string[]|string }, status?: number }> = {
-	'Unknown Error - 500': {status: 500, data: {error: "Error unknown"}},
-	'Not Found - 404': {status: 404, data: {error: 'Not Found'}},
-	'User or password not valid - 401': {status: 401, data:{ error: 'We didn\'t recognize that email or password'}},
-};
-
 
 export default {
 	title: 'users/SignInComponent',
-	// component: SignInComponent,
 	argTypes: {
-		isError: {
-			type: {name: 'boolean'},
-			defaultValue: false,
-			description: "Set whether getting the useCurrentUserAuth should throw an error next time",
-		},
-		error: {
-			control: {type: 'radio',options: Object.keys(optionsToSignInError)},
-			defaultValue: 'User or password not valid - 401',
-		},
 		showProgressAndSuccess: {
 			type: {name: 'boolean'},
 			defaultValue: true,
@@ -50,48 +32,67 @@ export default {
 };
 
 interface TemplateArgs {
-	error?: string;
-	isError: boolean;
 	showProgressAndSuccess?: boolean;
 }
 
+function OuterWrapper(props:React.PropsWithChildren<Record<string, unknown>>) {
+	sessionStorage.clear();
+	return <> {props.children}</>;
+}
+
 const Template = (args:TemplateArgs) => {
-
-	if (args.isError) {
-		mocked(postSignIn).mockImplementation(() => new Promise((_resolve, reject) => {
-			setTimeout(() => {
-				const result = optionsToSignInError[args.error];
-				reject(new NetworkError({data:result.data, status: result.status}));
-			}, 5000);
-		}));
-	}
-	else {
-
-		mocked(postSignIn).mockImplementation(() => new Promise(resolve => {
-			setTimeout(() => {
-				resolve({ id: 50 });
-				mocked(getCurrent).mockResolvedValue({id: 50});
-			}, 5000);
-		}));
-	}
-
-	return <SignInComponent onFailure={action('onFailure')} onSubmitting={action('onSubmitting')} onSuccess={action('onSuccess')} showProgressAndSuccess={args.showProgressAndSuccess}/>;
+	return (<OuterWrapper key={Math.random()}>
+		<SignInComponent  onFailure={action('onFailure')} onSubmitting={action('onSubmitting')} onSuccess={action('onSuccess')} showProgressAndSuccess={args.showProgressAndSuccess} />
+	</OuterWrapper>);
 };
 
 const SignedInTemplate = () => {
-	return <SWRWrapper><InitialCurrentUserContext.Provider value={{id:1}}><SignInComponent onSuccess={action('onSuccess')} showProgressAndSuccess /></InitialCurrentUserContext.Provider></SWRWrapper>;
+	sessionStorage.clear();
+	return <OuterWrapper key={Math.random()}><SWRWrapper key={Math.random()}><InitialCurrentUserContext.Provider value={{id:1}}><SignInComponent onSuccess={action('onSuccess')} showProgressAndSuccess /></InitialCurrentUserContext.Provider></SWRWrapper></OuterWrapper>;
 };
 
-export const SignInFailed = Template.bind({});
-SignInFailed.args = {
-	isError: true,
-	error: 'Unknown Error - 500',
+export const SignInFailed500 = Template.bind({});
+SignInFailed500.story = {
+	parameters: {
+		msw: [
+			rest.get(getCurrentRoute.url(), (_req, res,ctx) => {
+				return res(
+					ctx.status(NOT_LOGGED_IN_STATUS)
+				);
+			}),
+
+			rest.post(postSignInRoute.url(), (_req, res, ctx) => {
+				return res(
+					ctx.delay(5000),
+					ctx.json({error: "Some error"}),
+					ctx.status(500)
+				);
+			}),
+		],
+	},
 };
+
 
 export const SignedInToStart = SignedInTemplate.bind({});
 SignedInToStart.args = {
 };
 
+SignedInToStart.story =  {
+	parameters: {
+		msw: [
+			...UserPresignedIn,
+		],
+	},
+};
+
 export const SignInSucceeded = Template.bind({});
+
+SignInSucceeded.story = {
+	parameters: {
+		msw: [
+			...UserSignsInOnFirstAttempt,
+		],
+	},
+};
 
 
