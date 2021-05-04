@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-hooks */
 /* eslint-disable jest/no-commented-out-tests */
 // License: LGPL-3.0-or-later
 import * as React from "react";
@@ -14,8 +15,11 @@ import { SWRConfig } from "swr";
 
 import { InitialCurrentUserContext } from "../../hooks/useCurrentUser";
 
-import { setupServer } from 'msw/node';
-import { UserSignsInOnFirstAttempt } from "./tests/msw";
+import { server } from '../../api/mocks';
+import { UserSignsInOnFirstAttempt } from "../../hooks/mocks/useCurrentUserAuth";
+
+
+
 
 function MainWrapper(props:React.PropsWithChildren<unknown>) {
 	return <IntlProvider messages={I18n.translations['en'] as any } locale={'en'}> {/* eslint-disable-line @typescript-eslint/no-explicit-any */}
@@ -31,70 +35,43 @@ function MainWrapper(props:React.PropsWithChildren<unknown>) {
 
 //Testing email
 describe('SignInComponent', () => {
+	beforeEach(() => {
+		server.use(...UserSignsInOnFirstAttempt);
+	});
 	describe('initially not signed in', () => {
 		const Wrapper = MainWrapper;
 
 
-		describe('signIn is successful', () => {
-			const server = setupServer(...UserSignsInOnFirstAttempt);
-			async function signInSuccessWrapper(): Promise<{email:HTMLElement, onSuccess:()=> unknown, password: HTMLElement,success:HTMLElement }> {
-				server.listen();
-				const promise = Promise.resolve();
-				const onSuccess = jest.fn();
-				const {findByLabelText, findByTestId, queryByLabelText} = render(<Wrapper><SignInComponent onSuccess={onSuccess} showProgressAndSuccess/></Wrapper>);
-				const success = await findByTestId("signInComponentSuccess");
-				const email = await findByLabelText("Email");
-				const password = await findByLabelText("Password");
-				fireEvent.change(email, { target: { value: 'validEmail@email.com' } });
-				fireEvent.change(password, { target: { value: 'password' } });
+		it('signIn is successful', async () => {
+			expect.assertions(4);
+			const onSuccess = jest.fn();
+			const {findByLabelText, findByTestId} = render(<Wrapper><SignInComponent onSuccess={onSuccess} showProgressAndSuccess/></Wrapper>);
+			const success = await findByTestId("signInComponentSuccess");
+			const email = await findByLabelText("Email");
+			const password = await findByLabelText("Password");
+			fireEvent.change(email, { target: { value: 'validEmail@email.com' } });
+			fireEvent.change(password, { target: { value: 'password' } });
 
-				// we're getting the first element an attribute named 'data-testid' and a
-				// of 'signInButton'
-				const button = await findByTestId('signInButton');
+			// we're getting the first element an attribute named 'data-testid' and a
+			// of 'signInButton'
+			const button = await findByTestId('signInButton');
 
-				// act puts all of the related React updates for the click event into a
-				// single update. Since fireEvent.click calls some promises, we need to make
-				// the callback a Promise and await on act. If we didn't, our test wouldn't
-				// wait for all the possible React changes to happen at once.
+			// act puts all of the related React updates for the click event into a
+			// single update. Since fireEvent.click calls some promises, we need to make
+			// the callback a Promise and await on act. If we didn't, our test wouldn't
+			// wait for all the possible React changes to happen at once.
 
-				await waitFor( () => !button.hasAttribute('disabled'));
-				fireEvent.click(button);
+			await waitFor( () => !button.hasAttribute('disabled'));
+			fireEvent.click(button);
 
 
-				await waitForElementToBeRemoved(() => queryByLabelText("Email"));
-				await act(() => promise);
-				server.close();
-				return {success, onSuccess, email, password};
+			await waitForElementToBeRemoved(() => email);
 
-			}
-			it('success element is in document', async() => {
-				expect.assertions(1);
+			expect(success).toBeInTheDocument();
 
-				const {success} = await signInSuccessWrapper();
-
-				expect(success).toBeInTheDocument();
-
-			});
-
-			it('email and password elements not in document', async() => {
-				expect.assertions(1);
-
-				const {email, password} = await signInSuccessWrapper();
-
-				expect(email).not.toBeInTheDocument();
-				expect(password).not.toBeInTheDocument();
-
-			});
-
-			it('fired onsuccess', async() => {
-				expect.assertions(1);
-
-				const {onSuccess} = await signInSuccessWrapper();
-
-
-				expect(onSuccess).toHaveBeenCalledTimes(1);
-
-			});
+			expect(email).not.toBeInTheDocument();
+			expect(password).not.toBeInTheDocument();
+			expect(onSuccess).toHaveBeenCalledTimes(1);
 
 		});
 

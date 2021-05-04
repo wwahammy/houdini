@@ -15,9 +15,26 @@ export const UserSignInSucceeds = [
 	}),
 ];
 
+
+export const UserSignInSucceedsWithDelay = [
+	rest.post(postSignInRoute.url(), async (_req, res,ctx) => {
+		SetAuthenticated();
+		return res(
+			ctx.delay(5000),
+			ctx.json(DefaultUser)
+		);
+	}),
+];
+
 export const UserSignInFailsFromServerError = [
 	rest.post(postSignInRoute.url(), async (_req, res,ctx) => {
 		return res(ctx.status(500));
+	}),
+];
+
+export const UserSignInFailsFromServerErrorWithDelay = [
+	rest.post(postSignInRoute.url(), async (_req, res,ctx) => {
+		return res(ctx.delay(5000), ctx.status(500));
 	}),
 ];
 

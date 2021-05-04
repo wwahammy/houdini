@@ -34,6 +34,30 @@ export interface SignInComponentProps {
 	showProgressAndSuccess?: boolean;
 }
 
+function hasData(error:unknown): error is {data:unknown} {
+	return Object.prototype.hasOwnProperty.call(error, 'data');
+}
+
+function hasError(error:{data:unknown}): error is {data: {error:unknown}} {
+	return Object.prototype.hasOwnProperty.call(error.data, 'error');
+}
+
+function FailedAlert({error}:{error:unknown}) : JSX.Element {
+
+	if (hasData(error)) {
+		if (hasError(error)) {
+			if (error.data.error instanceof Array) {
+				return <>{error.data.error.map((error) => (<Alert aria-labelledby="errorTest" severity="error" key={error}>{error}</Alert>))}</>;
+			}
+			else if (typeof error.data.error === 'string') {
+				return 	<Alert aria-labelledby="errorTest" severity="error" key={error.data.error}>{error.data.error}</Alert>;
+			}
+		}
+	}
+	return <Alert aria-labelledby="errorTest" severity="error" key={'unknownerror'}>An unknown error occurred</Alert>;
+}
+
+
 function SignInComponent(props: SignInComponentProps): JSX.Element {
 	const [componentState, setComponentState] = useState<'ready' | 'canSubmit' | 'submitting' | 'success'>('ready');
 	const [isValid, setIsValid] = useState(false);
@@ -129,7 +153,6 @@ function SignInComponent(props: SignInComponentProps): JSX.Element {
 	const Button = styled(MuiButton)(spacing);
 	const classes = useStyles();
 
-	Formik;
 	return (
 		<Formik
 			initialValues={
@@ -195,12 +218,7 @@ function SignInComponent(props: SignInComponentProps): JSX.Element {
 						<div data-testid="errorTest">
 							<Box display="flex" justifyContent="center" alignItems="center">
 								{componentState === 'submitting' ? "" : <>
-									{failed ? (lastSignInAttemptError.data ? (
-										lastSignInAttemptError.data.error instanceof Array ?
-											lastSignInAttemptError.data.error.map((error) => (<Alert aria-labelledby="errorTest" severity="error" key={error}>{error}</Alert>)) :
-											<Alert aria-labelledby="errorTest" severity="error" key={lastSignInAttemptError.data.error}>{lastSignInAttemptError.data.error}</Alert>):
-										(<Alert aria-labelledby="errorTest" severity="error" key={'unknownerror'}>An unknown error occurred</Alert>))
-										: ""}
+									{failed ? <FailedAlert error={lastSignInAttemptError}/>: ""}
 								</>
 								}
 							</Box>

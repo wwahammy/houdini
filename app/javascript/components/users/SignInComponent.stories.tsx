@@ -2,12 +2,10 @@ import * as React from 'react';
 import { action } from '@storybook/addon-actions';
 
 import SignInComponent from './SignInComponent';
-import { rest } from 'msw';
-import { InitialCurrentUserContext, NOT_LOGGED_IN_STATUS } from '../../hooks/useCurrentUser';
+import { InitialCurrentUserContext } from '../../hooks/useCurrentUser';
 import { SWRConfig } from 'swr';
-import {postSignInRoute} from '../../api/users';
-import {getCurrentRoute} from '../../api/api/users';
-import { UserPresignedIn, UserSignsInOnFirstAttempt } from './tests/msw';
+import { UserSignInFailedWith500And5SecondDelay, UserSignsInOnFirstAttemptWith5SecondDelay } from '../../hooks/mocks/useCurrentUserAuth';
+import { UserPresignedIn } from '../../api/api/mocks/users';
 
 
 function SWRWrapper(props:React.PropsWithChildren<unknown>) {
@@ -54,21 +52,7 @@ const SignedInTemplate = () => {
 export const SignInFailed500 = Template.bind({});
 SignInFailed500.story = {
 	parameters: {
-		msw: [
-			rest.get(getCurrentRoute.url(), (_req, res,ctx) => {
-				return res(
-					ctx.status(NOT_LOGGED_IN_STATUS)
-				);
-			}),
-
-			rest.post(postSignInRoute.url(), (_req, res, ctx) => {
-				return res(
-					ctx.delay(5000),
-					ctx.json({error: "Some error"}),
-					ctx.status(500)
-				);
-			}),
-		],
+		msw: UserSignInFailedWith500And5SecondDelay,
 	},
 };
 
@@ -90,7 +74,7 @@ export const SignInSucceeded = Template.bind({});
 SignInSucceeded.story = {
 	parameters: {
 		msw: [
-			...UserSignsInOnFirstAttempt,
+			...UserSignsInOnFirstAttemptWith5SecondDelay,
 		],
 	},
 };
