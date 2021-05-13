@@ -2,7 +2,7 @@
 
 # License: AGPL-3.0-or-later WITH WTO-AP-3.0-or-later
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
-class StripeCharge < ApplicationRecord
+class StripeRefund < ApplicationRecord
 	include Model::SubtransactionPaymentable
 	belongs_to :payment
 
@@ -11,17 +11,17 @@ class StripeCharge < ApplicationRecord
 	delegate :currency, to: :nonprofit
 
 	def stripe_id
-		payment.charge.stripe_charge_id
+		payment.refund.stripe_refund_id
 	end
 
 	concerning :JBuilder do # rubocop:disable Metrics/BlockLength
 		included do
-			setup_houid :stripechrg
+			setup_houid :striperef
 		end
 
-		def to_builder(*expand) # rubocop:disable Metrics/AbcSize
+		def to_builder(*expand) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 			init_builder(*expand) do |json|
-				json.object 'stripe_transaction_charge'
+				json.object 'stripe_transaction_refund'
 				json.gross_amount do
 					json.cents gross_amount
 					json.currency currency
@@ -52,15 +52,15 @@ class StripeCharge < ApplicationRecord
 		def to_id
 			::Jbuilder.new do |json|
 				json.(self, :id)
-				json.object 'stripe_transaction_charge'
+				json.object 'stripe_transaction_refund'
 				json.type 'payment'
 			end
 		end
 
-		def publish_created
+		def publish_created # rubocop:disable Metrics/MethodLength
 			Houdini.event_publisher.announce(
 				:stripe_transaction_charge_created,
-				to_event('stripe_transaction_charge.created',
+				to_event('stripe_transaction_refund.created',
 													:nonprofit,
 													:trx,
 													:supporter,
