@@ -1046,7 +1046,6 @@ ActiveRecord::Schema.define(version: 2021_06_02_220525) do
   add_foreign_key "modern_campaign_gifts", "campaign_gifts"
   add_foreign_key "object_event_hook_configs", "nonprofits"
   add_foreign_key "offline_transaction_charges", "payments"
-  add_foreign_key "offline_transaction_refunds", "payments"
   add_foreign_key "recurrences", "recurring_donations"
   add_foreign_key "recurrences", "supporters"
   add_foreign_key "offline_transaction_refunds", "payments"
