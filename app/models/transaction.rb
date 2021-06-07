@@ -14,11 +14,12 @@ class Transaction < ApplicationRecord
 	has_many :ticket_purchases, through: :transaction_assignments, source: :assignable, source_type: 'TicketPurchase', inverse_of: 'trx'
 	has_many :campaign_gift_purchases, through: :transaction_assignments, source: :assignable, source_type: 'CampaignGiftPurchase', inverse_of: 'trx'
 
-	
 	has_one :subtransaction
 	has_many :subtransaction_payments, through: :subtransaction
 
 	validates :supporter, presence: true
+
+	delegate :currency, to: :nonprofit
 
 	
 	concerning :JBuilder do
