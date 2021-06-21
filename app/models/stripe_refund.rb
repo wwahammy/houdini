@@ -19,7 +19,7 @@ class StripeRefund < ApplicationRecord
 			setup_houid :striperef
 		end
 
-		def to_builder(*expand) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+		def to_builder(*expand) # rubocop:disable Metrics/AbcSize
 			init_builder(*expand) do |json|
 				json.object 'stripe_transaction_refund'
 				json.gross_amount do
@@ -40,7 +40,7 @@ class StripeRefund < ApplicationRecord
 				json.created payment.date.to_i
 
 				json.stripe_id stripe_id
-				
+
 				json.type 'payment'
 
 				json.add_builder_expansion :nonprofit, :supporter, :subtransaction
@@ -57,19 +57,45 @@ class StripeRefund < ApplicationRecord
 			end
 		end
 
-		def publish_created # rubocop:disable Metrics/MethodLength
+		def publish_created
 			Houdini.event_publisher.announce(
-				:stripe_transaction_charge_created,
-				to_event('stripe_transaction_refund.created',
+				:stripe_transaction_refund_created,
+				to_event('stripe_transaction_refund.created', :nonprofit, :trx, :supporter, :subtransaction)
+					.attributes!
+			)
+			Houdini.event_publisher.announce(
+				:payment_created,
+				to_event('payment.created', :nonprofit, :trx, :supporter, :subtransaction)
+					.attributes!
+			)
+		end
+
+		def publish_updated
+			Houdini.event_publisher.announce(
+				:stripe_transaction_refund_updated,
+				to_event('stripe_transaction_refund.updated', :nonprofit, :trx, :supporter, :subtransaction)
+					.attributes!
+			)
+			Houdini.event_publisher.announce(
+				:payment_updated,
+				to_event('payment.updated', :nonprofit, :trx, :supporter, :subtransaction)
+					.attributes!
+			)
+		end
+
+		def publish_deleted
+			Houdini.event_publisher.announce(
+				:stripe_transaction_refund_deleted,
+				to_event('stripe_transaction_refund.deleted',
 													:nonprofit,
 													:trx,
 													:supporter,
 													:subtransaction).attributes!
 			)
 			Houdini.event_publisher.announce(
-				:payment_created,
+				:payment_deleted,
 				to_event(
-					'payment.created',
+					'payment.deleted',
 					:nonprofit,
 					:trx,
 					:supporter,

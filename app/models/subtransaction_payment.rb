@@ -13,7 +13,14 @@ class SubtransactionPayment < ApplicationRecord
 	has_one :supporter, through: :subtransaction
 	has_one :nonprofit, through: :subtransaction
 
-	delegated_type :paymentable, types: %w[OfflineTransactionCharge OfflineTransactionDispute OfflineTransactionRefund StripeCharge StripeRefund]
+	delegated_type :paymentable,
+		types: %w[
+			OfflineTransactionCharge
+			OfflineTransactionDispute
+			OfflineTransactionRefund
+			StripeCharge
+			StripeRefund
+		]
 
 	delegate :gross_amount, :fee_total, :net_amount, to: :paymentable
 

@@ -4,6 +4,6 @@
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
 FactoryBot.define do
 	factory :stripe_charge do
-		references { '' }
+		payment { '' }
 	end
 end

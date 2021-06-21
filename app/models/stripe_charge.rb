@@ -40,7 +40,7 @@ class StripeCharge < ApplicationRecord
 				json.created payment.date.to_i
 
 				json.stripe_id stripe_id
-				
+
 				json.type 'payment'
 
 				json.add_builder_expansion :nonprofit, :supporter, :subtransaction
