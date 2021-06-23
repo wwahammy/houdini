@@ -43,7 +43,7 @@ module InsertRefunds
 
     gross = -(h['amount'])
     platform_fee = BillingPlans.get_percentage_fee(charge['nonprofit_id'])
-    fees = (h['amount'] * -original_payment['fee_total'] / original_payment['gross_amount']).ceil
+    fees = (h['amount'] * - original_payment['fee_total'] / original_payment['gross_amount']).ceil
     net = gross + fees
     # Create a corresponding negative payment record
     payment_row = Qx.insert_into(:payments).values(

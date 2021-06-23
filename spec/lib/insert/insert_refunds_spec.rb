@@ -4,81 +4,107 @@
 # Full license explanation at https://github.com/houdiniproject/houdini/blob/master/LICENSE
 require 'rails_helper'
 
-describe InsertRefunds, pending: true do
-  # before(:all) do
-  #   stripe_acct = VCR.use_cassette('InsertRefunds/stripe_acct'){Stripe::Account.create(managed: true, country: 'US', email: 'uzr@example.com').id}
-  #  @supp = Psql.execute(Qexpr.new.insert('supporters', [{name: 'nnname'}])).first
-  #  @payment = Psql.execute(Qexpr.new.insert('payments', [{supporter_id: @supp['id'], gross_amount: 100, fee_total: 33, net_amount: 67, refund_total: 0}]).returning('*')).first
-  #  @nonprofit = Psql.execute(Qexpr.new.insert('nonprofits', [{name: 'xxxx', stripe_account_id: stripe_acct}]).returning('*')).first
-  #   stripe_token  = VCR.use_cassette('InsertRefunds/stripe_token'){Stripe::Token.create(card: StripeTestHelpers::Card_immediate).id}
-  #   stripe_charge = VCR.use_cassette('InsertRefunds/stripe_charge'){Stripe::Charge.create(amount: 10000, currency: 'usd', source: stripe_token, description: 'charge 1', destination: stripe_acct)}
-  #  @charge = Qx.insert_into(:charges).values({
-  #    amount: 100,
-  #    stripe_charge_id: stripe_charge.id,
-  #    nonprofit_id: @nonprofit['id'],
-  #    payment_id: @payment['id'],
-  #    supporter_id: @supp['id']
-  #  }).returning('*').timestamps.execute.first
-  #  @refund_amount = 100
-  #  @fees = CalculateFees.for_single_amount(100)
-  # end
+describe InsertRefunds do
+	let!(:nonprofit) { create(:nm_justice) }
+	let!(:supporter) { create(:supporter, nonprofit: nonprofit) }
+
+  let!(:gross_amount) { 500 }
+  let!(:fees) { CalculateFees.for_single_amount(gross_amount) }
+  let!(:net_amount) { gross_amount + fees }
+  let!(:payment) do
+    force_create(
+      :payment,
+      gross_amount: gross_amount,
+      net_amount: net_amount,
+      fee_total: fees,
+      date: Time.zone.now,
+      nonprofit: nonprofit,
+      supporter: supporter,
+      refund_total: 0
+    )
+  end
+
+  let!(:stripe_charge) { create(:stripe_charge, payment: payment) }
+  let!(:charge) { create(:charge, payment: payment, stripe_charge_id: 'ch_s0m3th1ng', nonprofit: nonprofit, supporter: supporter, amount: gross_amount) }
+
+  before do
+    nonprofit.save!
+    supporter.save!
+    stripe_charge.save!
+    charge.save!
+  end
 
   describe '.with_stripe' do
     context 'when invalid' do
       it 'raises an error with an invalid charge' do
-        bad_ch = @charge.merge('stripe_charge_id' => 'xxx')
-        expect { InsertRefunds.with_stripe(bad_ch, 'amount' => 1) }.to raise_error(ParamValidation::ValidationError)
-        raise
+        charge.update(stripe_charge_id: 'xxx')
+        expect { InsertRefunds.with_stripe(charge, amount: 1) }.to raise_error(ParamValidation::ValidationError)
       end
 
       it 'sets a failure message an error with an invalid amount' do
-        bad_ch = @charge.merge('amount' => 0)
-        expect { InsertRefunds.with_stripe(bad_ch, 'amount' => 0) }.to raise_error(ParamValidation::ValidationError)
-        raise
+        charge.update(amount: 0)
+        expect { InsertRefunds.with_stripe(charge, amount: 0) }.to raise_error(ParamValidation::ValidationError)
       end
 
       it 'returns err if refund amount is greater than payment gross minus payment refund total' do
-        new_payment = Qx.insert_into(:payments).values(gross_amount: 1000, fee_total: 0, net_amount: 1000, refund_total: 500).ts.returning('*').execute.first
-        new_charge = @charge.merge('payment_id' => new_payment['id'])
-        expect { InsertRefunds.with_stripe(new_charge, 'amount' => 600) }.to raise_error(RuntimeError)
-        raise
+        expect { InsertRefunds.with_stripe(charge, 'amount' => 600) }.to raise_error(RuntimeError)
       end
     end
 
     context 'when valid' do
-      # before(:each) do
-      #   @result = VCR.use_cassette 'InsertRefunds/result' do
-      #     InsertRefunds.with_stripe(@charge, {'amount' => 100})
-      # end
-      #   @new_payment = Psql.execute("SELECT * FROM payments WHERE id=#{@payment['id']}").first
-      # end
+      let(:retrieved_stripe_charge) { double }
+      let(:stripe_charge_refunds) { double }
+      let(:created_stripe_charge_refund) { double }
+
+      let(:fake_refund_id) { 're_f@k3' }
+
+      before do
+        allow(Stripe::Charge)
+          .to receive(:retrieve)
+          .with('ch_s0m3th1ng')
+          .and_return(retrieved_stripe_charge)
+        allow(retrieved_stripe_charge)
+          .to receive(:refunds)
+          .and_return(stripe_charge_refunds)
+        allow(stripe_charge_refunds)
+          .to receive(:create)
+          .with({'amount' => 100, 'refund_application_fee' => true, 'reverse_transfer' => true })
+          .and_return(created_stripe_charge_refund)
+        allow(created_stripe_charge_refund)
+          .to receive(:id)
+          .and_return(fake_refund_id)
+      end
+
+      subject { InsertRefunds.with_stripe(charge, 'amount' => 100) }
 
       it 'sets the stripe refund id' do
-        expect(@result['refund']['stripe_refund_id']).to match(/^re_/)
+        result = subject
+        expect(result['refund']['stripe_refund_id']).to match(/^re_/)
       end
 
       it 'creates a negative payment for the refund with the gross amount' do
-        expect(@result['payment']['gross_amount']).to eq(-@refund_amount)
+        result = subject
+        expect(result['payment']['gross_amount']).to eq(-100)
       end
 
       it 'creates a negative payment for the refund with the net amount' do
-        expect(@result['payment']['net_amount']).to eq(-@refund_amount + @fees)
+        result = subject
+        expect(result['payment']['net_amount']).to eq(-109)
       end
 
       it 'updates the payment_id on the refund' do
-        expect(@result['refund']['payment_id']).to eq(@result['payment']['id'])
+        result = subject
+        expect(result['refund']['payment_id']).to eq(result['payment']['id'])
       end
 
       it 'increments the payment refund total by the gross amount' do
-        expect(@new_payment['refund_total']).to eq(@refund_amount)
+        subject
+        expect(payment.reload['refund_total']).to eq(100)
       end
 
       it 'sets the payment supporter id' do
-        expect(@result['payment']['supporter_id']).to eq(@supp['id'])
-      end
-
-      it 'sets the payment fee_total as negative fees of the original payment' do
-        expect(@result['payment']['fee_total']).to eq(CalculateFees.for_single_amount(@refund_amount))
+        result = subject
+        expect(result['payment']['supporter_id']).to eq(supporter['id'])
       end
     end
   end
