@@ -163,7 +163,8 @@
     "velocity-react": "^1.4.1",
     "view-script": "0.3.6",
     "virtual-dom": "2.1.1",
-    "vvvview": "0.4.3"
+    "vvvview": "0.4.3",
+    "whatwg-fetch": "^3.6.2"
   },
   "jest": {
     "testEnvironment": "enzyme",
