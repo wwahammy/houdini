@@ -10,13 +10,10 @@ flyd.filter = require('flyd/module/filter')
 flyd.mergeAll = require('flyd/module/mergeall')
 const scanMerge = require('flyd/module/scanmerge')
 const uniqueId = require('lodash/uniqueId')
-// local
-const request = require('../common/request')
-const createCardStream = require('../cards/create-frp.es6')
 
 const create_card_element = require('../../../javascripts/src/lib/create_card_element.ts')
 
-const grecaptchaPromised = require('../../../javascripts/src/lib/grecaptcha_during_payment').default
+const SaveCard = require('./card-form-process').default
 
 // A component for filling out card data, validating it, saving the card to
 // stripe, and then saving a tokenized copy to our servers.
@@ -55,38 +52,23 @@ const init = (state) => {
   state.card$ = flyd.merge(state.card$ || flyd.stream({}), state.form.validData$)
 
   state.elementMounted = false
-  // streams of stripe tokenization responses
-  const stripeResp$ = flyd.flatMap((i) => {
 
-    if (state.form.validData$().address_zip) {
-      state.element.update({ value: { postalCode: state.form.validData$().address_zip } })
-    }
-    return createCardStream(state.element, state.form.validData$().name)
+  // response from trying to throw save the card
+  state.resp$ = flyd.flatMap((formData) => {
+    const result$ = flyd.stream()
+    SaveCard({
+      cardObject: state.element,
+      path: state.path$(),
+      payload: state.payload$(),
+      validFormData: formData
+    }).then(i => result$(i)).catch(i => result$(i))
+    return result$;
   }, state.form.validData$)
-  state.stripeRespOk$ = flyd.filter(r => !r.error, stripeResp$)
-  const stripeError$ = flyd.map(r => r.error.message, flyd.filter(r => r.error, stripeResp$))
-
-  const recaptchaKey$ = flyd.flatMap((resp) => {
-    return flyd.stream(grecaptchaPromised(resp).catch(i => i))
-  }, state.stripeRespOk$)
-
-  const recaptchaKeyOk$ = flyd.filter(r => !r.message, recaptchaKey$)
-
-  // Save the card as a card table on our own db
-  // streams of responses
-  state.resp$ = flyd.flatMap((resp) => {
-
-    //handle cases where the recaptcha is in error
-    return saveCard(state.payload$(), state.path$(), resp.stripe_resp, resp.recaptcha_token)
-  }, recaptchaKeyOk$)
-
-  const recaptchaError$ = flyd.map(R.prop('message'), flyd.filter(resp => {
-    return resp.message
-  }, recaptchaKey$))
-
-  const ccError$ = flyd.map(R.prop('error'), flyd.filter(resp => resp.error, state.resp$))
-  state.saved$ = flyd.filter(resp => !resp.error, state.resp$)
-  state.error$ = flyd.merge(stripeError$, flyd.merge(ccError$, recaptchaError$))
+  
+  // Errors are anything which an instance of Error
+  const submitError$ = flyd.map(R.prop('message'), flyd.filter(resp => resp instanceof Error, state.resp$))
+  state.saved$ = flyd.filter(resp => !(resp instanceof Error), state.resp$)
+  state.error$ = submitError$
 
   state.loading$ = scanMerge([
     [state.form.validSubmit$, R.always(true)]
@@ -95,25 +77,6 @@ const init = (state) => {
   ], false)
 
   return state
-}
-
-
-// -- Stream-related functions
-
-
-// Save the card to our own servers, and return a response stream
-const saveCard = (send, path, resp, recaptcha_token) => {
-  send = R.merge(send, {
-    'g-recaptcha-response': recaptcha_token
-  });
-  send.card = R.merge(send.card, {
-    cardholders_name: resp.name
-    , name: `${resp.token.card.brand} *${resp.token.card.last4}`
-    , stripe_card_token: resp.token.id
-    , stripe_card_id: resp.token.card.id
-  })
-
-  return flyd.map(R.prop('body'), request({ path, send, method: 'post' }).load)
 }
 
 const mount = state => {
