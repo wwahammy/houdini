@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 12.7 (Ubuntu 12.7-0ubuntu0.20.10.1)
--- Dumped by pg_dump version 13.4 (Ubuntu 13.4-0ubuntu0.21.04.1)
+-- Dumped by pg_dump version 13.5 (Ubuntu 13.5-0ubuntu0.21.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2945,6 +2945,41 @@ ALTER SEQUENCE public.trackings_id_seq OWNED BY public.trackings.id;
 
 
 --
+-- Name: transactions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.transactions (
+    id integer NOT NULL,
+    supporter_id integer,
+    houid character varying NOT NULL,
+    amount integer,
+    created timestamp without time zone,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.transactions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.transactions_id_seq OWNED BY public.transactions.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3521,6 +3556,13 @@ ALTER TABLE ONLY public.tickets ALTER COLUMN id SET DEFAULT nextval('public.tick
 --
 
 ALTER TABLE ONLY public.trackings ALTER COLUMN id SET DEFAULT nextval('public.trackings_id_seq'::regclass);
+
+
+--
+-- Name: transactions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transactions ALTER COLUMN id SET DEFAULT nextval('public.transactions_id_seq'::regclass);
 
 
 --
@@ -4131,6 +4173,14 @@ ALTER TABLE ONLY public.trackings
 
 
 --
+-- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transactions
+    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4675,6 +4725,27 @@ CREATE INDEX index_tickets_on_payment_id ON public.tickets USING btree (payment_
 --
 
 CREATE INDEX index_tickets_on_supporter_id ON public.tickets USING btree (supporter_id);
+
+
+--
+-- Name: index_transactions_on_created; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transactions_on_created ON public.transactions USING btree (created);
+
+
+--
+-- Name: index_transactions_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_transactions_on_houid ON public.transactions USING btree (houid);
+
+
+--
+-- Name: index_transactions_on_supporter_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_transactions_on_supporter_id ON public.transactions USING btree (supporter_id);
 
 
 --
@@ -5953,6 +6024,8 @@ INSERT INTO schema_migrations (version) VALUES ('20201001162737');
 INSERT INTO schema_migrations (version) VALUES ('20201103170055');
 
 INSERT INTO schema_migrations (version) VALUES ('20201214214347');
+
+INSERT INTO schema_migrations (version) VALUES ('20210122184714');
 
 INSERT INTO schema_migrations (version) VALUES ('20210413201029');
 
