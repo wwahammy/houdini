@@ -19,6 +19,8 @@ gem 'parallel'
 
 gem "puma", "~> 5.5"
 
+gem 'kaminari'
+
 gem 'bootsnap', require: false
 gem 'rack-timeout'
 gem 'puma_worker_killer'
