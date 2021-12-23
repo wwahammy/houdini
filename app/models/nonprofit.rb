@@ -110,6 +110,8 @@ class Nonprofit < ActiveRecord::Base
 
   geocoded_by :full_address
 
+  has_many :transactions, through: :supporters
+
 
   scope :activated, -> { includes(:nonprofit_deactivation).where('nonprofit_deactivations.nonprofit_id IS NULL OR NOT COALESCE(nonprofit_deactivations.deactivated, false)').references(:nonprofit_deactivations)}
   scope :deactivated, -> { joins(:nonprofit_deactivation).where('nonprofit_deactivations.deactivated = true')}

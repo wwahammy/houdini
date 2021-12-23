@@ -1796,6 +1796,40 @@ ALTER SEQUENCE public.miscellaneous_np_infos_id_seq OWNED BY public.miscellaneou
 
 
 --
+-- Name: modern_donations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.modern_donations (
+    id integer NOT NULL,
+    amount integer,
+    donation_id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: modern_donations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.modern_donations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: modern_donations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.modern_donations_id_seq OWNED BY public.modern_donations.id;
+
+
+--
 -- Name: nonprofit_deactivations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1997,6 +2031,72 @@ CREATE SEQUENCE public.nonprofits_id_seq
 --
 
 ALTER SEQUENCE public.nonprofits_id_seq OWNED BY public.nonprofits.id;
+
+
+--
+-- Name: offline_transaction_charges; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.offline_transaction_charges (
+    id integer NOT NULL,
+    payment_id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: offline_transaction_charges_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.offline_transaction_charges_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: offline_transaction_charges_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.offline_transaction_charges_id_seq OWNED BY public.offline_transaction_charges.id;
+
+
+--
+-- Name: offline_transactions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.offline_transactions (
+    id integer NOT NULL,
+    amount integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: offline_transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.offline_transactions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: offline_transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.offline_transactions_id_seq OWNED BY public.offline_transactions.id;
 
 
 --
@@ -2690,6 +2790,76 @@ ALTER SEQUENCE public.stripe_events_id_seq OWNED BY public.stripe_events.id;
 
 
 --
+-- Name: subtransaction_payments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.subtransaction_payments (
+    id integer NOT NULL,
+    subtransaction_id integer NOT NULL,
+    paymentable_id integer NOT NULL,
+    paymentable_type character varying NOT NULL,
+    created timestamp without time zone,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: subtransaction_payments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.subtransaction_payments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subtransaction_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.subtransaction_payments_id_seq OWNED BY public.subtransaction_payments.id;
+
+
+--
+-- Name: subtransactions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.subtransactions (
+    id integer NOT NULL,
+    transaction_id integer NOT NULL,
+    subtransactable_id integer NOT NULL,
+    subtransactable_type character varying NOT NULL,
+    created timestamp without time zone,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: subtransactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.subtransactions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: subtransactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.subtransactions_id_seq OWNED BY public.subtransactions.id;
+
+
+--
 -- Name: supporter_addresses; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3076,6 +3246,38 @@ CREATE SEQUENCE public.trackings_id_seq
 --
 
 ALTER SEQUENCE public.trackings_id_seq OWNED BY public.trackings.id;
+
+
+--
+-- Name: transaction_assignments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.transaction_assignments (
+    id integer NOT NULL,
+    transaction_id integer NOT NULL,
+    assignable_id integer NOT NULL,
+    assignable_type character varying NOT NULL
+);
+
+
+--
+-- Name: transaction_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.transaction_assignments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: transaction_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.transaction_assignments_id_seq OWNED BY public.transaction_assignments.id;
 
 
 --
@@ -3490,6 +3692,13 @@ ALTER TABLE ONLY public.miscellaneous_np_infos ALTER COLUMN id SET DEFAULT nextv
 
 
 --
+-- Name: modern_donations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.modern_donations ALTER COLUMN id SET DEFAULT nextval('public.modern_donations_id_seq'::regclass);
+
+
+--
 -- Name: nonprofit_deactivations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3522,6 +3731,20 @@ ALTER TABLE ONLY public.nonprofit_verification_process_statuses ALTER COLUMN id 
 --
 
 ALTER TABLE ONLY public.nonprofits ALTER COLUMN id SET DEFAULT nextval('public.nonprofits_id_seq'::regclass);
+
+
+--
+-- Name: offline_transaction_charges id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.offline_transaction_charges ALTER COLUMN id SET DEFAULT nextval('public.offline_transaction_charges_id_seq'::regclass);
+
+
+--
+-- Name: offline_transactions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.offline_transactions ALTER COLUMN id SET DEFAULT nextval('public.offline_transactions_id_seq'::regclass);
 
 
 --
@@ -3651,6 +3874,20 @@ ALTER TABLE ONLY public.stripe_events ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: subtransaction_payments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subtransaction_payments ALTER COLUMN id SET DEFAULT nextval('public.subtransaction_payments_id_seq'::regclass);
+
+
+--
+-- Name: subtransactions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subtransactions ALTER COLUMN id SET DEFAULT nextval('public.subtransactions_id_seq'::regclass);
+
+
+--
 -- Name: supporter_addresses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3718,6 +3955,13 @@ ALTER TABLE ONLY public.tickets ALTER COLUMN id SET DEFAULT nextval('public.tick
 --
 
 ALTER TABLE ONLY public.trackings ALTER COLUMN id SET DEFAULT nextval('public.trackings_id_seq'::regclass);
+
+
+--
+-- Name: transaction_assignments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction_assignments ALTER COLUMN id SET DEFAULT nextval('public.transaction_assignments_id_seq'::regclass);
 
 
 --
@@ -4103,6 +4347,14 @@ ALTER TABLE ONLY public.miscellaneous_np_infos
 
 
 --
+-- Name: modern_donations modern_donations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.modern_donations
+    ADD CONSTRAINT modern_donations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: bank_accounts nonprofit_bank_accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4156,6 +4408,22 @@ ALTER TABLE ONLY public.nonprofit_verification_process_statuses
 
 ALTER TABLE ONLY public.nonprofits
     ADD CONSTRAINT npos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: offline_transaction_charges offline_transaction_charges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.offline_transaction_charges
+    ADD CONSTRAINT offline_transaction_charges_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: offline_transactions offline_transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.offline_transactions
+    ADD CONSTRAINT offline_transactions_pkey PRIMARY KEY (id);
 
 
 --
@@ -4287,6 +4555,22 @@ ALTER TABLE ONLY public.stripe_events
 
 
 --
+-- Name: subtransaction_payments subtransaction_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subtransaction_payments
+    ADD CONSTRAINT subtransaction_payments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subtransactions subtransactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.subtransactions
+    ADD CONSTRAINT subtransactions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: supporter_addresses supporter_addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4364,6 +4648,14 @@ ALTER TABLE ONLY public.tickets
 
 ALTER TABLE ONLY public.trackings
     ADD CONSTRAINT trackings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transaction_assignments transaction_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transaction_assignments
+    ADD CONSTRAINT transaction_assignments_pkey PRIMARY KEY (id);
 
 
 --
@@ -4450,6 +4742,27 @@ CREATE INDEX donations_supporter_id ON public.donations USING btree (supporter_i
 --
 
 CREATE INDEX events_nonprofit_id_not_deleted_and_published_endtime ON public.events USING btree (nonprofit_id, deleted, published, end_datetime);
+
+
+--
+-- Name: idx_subtrx_on_subtransactable_polymorphic; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_subtrx_on_subtransactable_polymorphic ON public.subtransactions USING btree (subtransactable_type, subtransactable_id);
+
+
+--
+-- Name: idx_subtrxpayments_on_subtransactable_polymorphic; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_subtrxpayments_on_subtransactable_polymorphic ON public.subtransaction_payments USING btree (paymentable_type, paymentable_id);
+
+
+--
+-- Name: idx_trx_assignments_assignable_polymorphic; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_trx_assignments_assignable_polymorphic ON public.transaction_assignments USING btree (assignable_type, assignable_id);
 
 
 --
@@ -4705,10 +5018,38 @@ CREATE INDEX index_misc_recurring_donation_infos_on_recurring_donation_id ON pub
 
 
 --
+-- Name: index_modern_donations_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_modern_donations_on_houid ON public.modern_donations USING btree (houid);
+
+
+--
 -- Name: index_nonprofit_verification_to_stripe; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_nonprofit_verification_to_stripe ON public.nonprofit_verification_process_statuses USING btree (stripe_account_id);
+
+
+--
+-- Name: index_offline_transaction_charges_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_offline_transaction_charges_on_houid ON public.offline_transaction_charges USING btree (houid);
+
+
+--
+-- Name: index_offline_transaction_charges_on_payment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_offline_transaction_charges_on_payment_id ON public.offline_transaction_charges USING btree (payment_id);
+
+
+--
+-- Name: index_offline_transactions_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_offline_transactions_on_houid ON public.offline_transactions USING btree (houid);
 
 
 --
@@ -6305,4 +6646,6 @@ INSERT INTO schema_migrations (version) VALUES ('20211119224854');
 INSERT INTO schema_migrations (version) VALUES ('20211210185111');
 
 INSERT INTO schema_migrations (version) VALUES ('20211222175658');
+
+INSERT INTO schema_migrations (version) VALUES ('20211223202404');
 
