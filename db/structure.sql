@@ -2039,7 +2039,6 @@ ALTER SEQUENCE public.nonprofits_id_seq OWNED BY public.nonprofits.id;
 
 CREATE TABLE public.offline_transaction_charges (
     id integer NOT NULL,
-    payment_id integer NOT NULL,
     houid character varying NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
@@ -2799,6 +2798,7 @@ CREATE TABLE public.subtransaction_payments (
     paymentable_id integer NOT NULL,
     paymentable_type character varying NOT NULL,
     created timestamp without time zone,
+    legacy_payment_id integer NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -5039,13 +5039,6 @@ CREATE UNIQUE INDEX index_offline_transaction_charges_on_houid ON public.offline
 
 
 --
--- Name: index_offline_transaction_charges_on_payment_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_offline_transaction_charges_on_payment_id ON public.offline_transaction_charges USING btree (payment_id);
-
-
---
 -- Name: index_offline_transactions_on_houid; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5211,6 +5204,13 @@ CREATE INDEX index_stripe_events_on_event_id ON public.stripe_events USING btree
 --
 
 CREATE INDEX index_stripe_events_on_object_id_and_event_time ON public.stripe_events USING btree (object_id, event_time);
+
+
+--
+-- Name: index_subtransaction_payments_on_legacy_payment_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_subtransaction_payments_on_legacy_payment_id ON public.subtransaction_payments USING btree (legacy_payment_id);
 
 
 --
