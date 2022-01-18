@@ -2627,6 +2627,41 @@ ALTER SEQUENCE public.sessions_id_seq OWNED BY public.sessions.id;
 
 
 --
+-- Name: simple_objects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.simple_objects (
+    id integer NOT NULL,
+    houid character varying,
+    parent_id integer,
+    friend_id integer,
+    nonprofit_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: simple_objects_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.simple_objects_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: simple_objects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.simple_objects_id_seq OWNED BY public.simple_objects.id;
+
+
+--
 -- Name: source_tokens; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3846,6 +3881,13 @@ ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.ses
 
 
 --
+-- Name: simple_objects id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.simple_objects ALTER COLUMN id SET DEFAULT nextval('public.simple_objects_id_seq'::regclass);
+
+
+--
 -- Name: stripe_accounts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4520,6 +4562,14 @@ ALTER TABLE ONLY public.roles
 
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: simple_objects simple_objects_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.simple_objects
+    ADD CONSTRAINT simple_objects_pkey PRIMARY KEY (id);
 
 
 --
@@ -6648,4 +6698,6 @@ INSERT INTO schema_migrations (version) VALUES ('20211210185111');
 INSERT INTO schema_migrations (version) VALUES ('20211222175658');
 
 INSERT INTO schema_migrations (version) VALUES ('20211223202404');
+
+INSERT INTO schema_migrations (version) VALUES ('20220112210519');
 
