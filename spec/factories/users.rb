@@ -10,4 +10,29 @@ FactoryBot.define do
     password "whocares"
     id { 540 }
   end
+
+  factory :user_as_nonprofit_admin, class: User do
+    sequence(:email) {|i| "user#{i}@example.string.com"}
+    password "whocares"
+    roles {[
+      build(:role, name: 'nonprofit_admin', host: create(:fv_poverty))
+    ]}
+  end
+
+  factory :user_as_nonprofit_associate, class: User do
+    sequence(:email) {|i| "user#{i}@example.string.com"}
+    password "whocares"
+    roles {[
+      build(:role, name: 'nonprofit_associate', host: create(:fv_poverty))
+    ]}
+  end
+
+  factory :user_as_super_admin, class: User do
+    sequence(:email) {|i| "user#{i}@example.string.com"}
+    password "whocares"
+    roles {[
+      build(:role, name: 'nonprofit_associate', host: create(:fv_poverty)),
+      build(:role, name: 'super_admin')
+    ]}
+  end
 end
