@@ -2369,7 +2369,7 @@ ALTER SEQUENCE public.recurring_donation_holds_id_seq OWNED BY public.recurring_
 
 CREATE TABLE public.recurring_donations (
     id integer NOT NULL,
-    active boolean,
+    active boolean NOT NULL,
     paydate integer,
     card_id integer,
     nonprofit_id integer,
@@ -6232,4 +6232,6 @@ INSERT INTO schema_migrations (version) VALUES ('20211119224854');
 INSERT INTO schema_migrations (version) VALUES ('20211210185111');
 
 INSERT INTO schema_migrations (version) VALUES ('20211222175658');
+
+INSERT INTO schema_migrations (version) VALUES ('20220119201757');
 

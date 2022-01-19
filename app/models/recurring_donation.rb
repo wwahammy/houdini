@@ -21,14 +21,14 @@ class RecurringDonation < ActiveRecord::Base
     :anonymous
 
   scope :active,   -> {where(active: true)}
-  scope :inactive, -> {where(active: [false,nil])}
-  scope :cancelled, -> {where(active: [false, nil])}
+  scope :inactive, -> {where(active: false)}
+  scope :cancelled, -> { inactive }
   scope :monthly,  -> {where(time_unit: 'month', interval: 1)}
   scope :annual,   -> {where(time_unit: 'year', interval: 1)}
   scope :failed, -> {where('n_failures >= 3')}
   scope :unfailed, -> {where('n_failures < 3')}
 
-  scope :may_attempt_again, -> {where('recurring_donations.active AND (recurring_donations.end_date IS NULL OR recurring_donations.end_date > ?) AND recurring_donations.n_failures < 3', Time.current)}
+  scope :may_attempt_again, -> {active.unfailed.where('recurring_donations.end_date IS NULL OR recurring_donations.end_date > ?', Time.current)}
 
   belongs_to :donation
   belongs_to :nonprofit

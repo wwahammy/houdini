@@ -47,4 +47,14 @@ RSpec.describe RecurringDonation, type: :model do
 
     it {is_expected.to include ends_in_future}
   end
+
+  context 'prevents saving recurring_donation when null' do
+
+    it {
+      expect{ force_create(:recurring_donation, active: nil)}.to(raise_error(ActiveRecord::StatementInvalid)  do |error|
+       expect(error.original_exception).to be_a PG::NotNullViolation
+       expect(error.original_exception.error).to include '"active"'
+      end)
+    }
+  end
 end
