@@ -2034,6 +2034,45 @@ ALTER SEQUENCE public.nonprofits_id_seq OWNED BY public.nonprofits.id;
 
 
 --
+-- Name: object_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.object_events (
+    id integer NOT NULL,
+    event_entity_id integer,
+    event_entity_type character varying,
+    event_type character varying,
+    event_entity_houid character varying,
+    nonprofit_id integer,
+    houid character varying,
+    created timestamp without time zone,
+    object_json jsonb,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: object_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.object_events_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: object_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.object_events_id_seq OWNED BY public.object_events.id;
+
+
+--
 -- Name: offline_transaction_charges; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3769,6 +3808,13 @@ ALTER TABLE ONLY public.nonprofits ALTER COLUMN id SET DEFAULT nextval('public.n
 
 
 --
+-- Name: object_events id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.object_events ALTER COLUMN id SET DEFAULT nextval('public.object_events_id_seq'::regclass);
+
+
+--
 -- Name: offline_transaction_charges id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4453,6 +4499,14 @@ ALTER TABLE ONLY public.nonprofits
 
 
 --
+-- Name: object_events object_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.object_events
+    ADD CONSTRAINT object_events_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: offline_transaction_charges offline_transaction_charges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5079,6 +5133,48 @@ CREATE UNIQUE INDEX index_modern_donations_on_houid ON public.modern_donations U
 --
 
 CREATE UNIQUE INDEX index_nonprofit_verification_to_stripe ON public.nonprofit_verification_process_statuses USING btree (stripe_account_id);
+
+
+--
+-- Name: index_object_events_on_event_entity_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_event_entity_houid ON public.object_events USING btree (event_entity_houid);
+
+
+--
+-- Name: index_object_events_on_event_entity_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_event_entity_type ON public.object_events USING btree (event_entity_type);
+
+
+--
+-- Name: index_object_events_on_event_entity_type_and_event_entity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_event_entity_type_and_event_entity_id ON public.object_events USING btree (event_entity_type, event_entity_id);
+
+
+--
+-- Name: index_object_events_on_event_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_event_type ON public.object_events USING btree (event_type);
+
+
+--
+-- Name: index_object_events_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_houid ON public.object_events USING btree (houid);
+
+
+--
+-- Name: index_object_events_on_nonprofit_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_object_events_on_nonprofit_id ON public.object_events USING btree (nonprofit_id);
 
 
 --
@@ -6698,6 +6794,8 @@ INSERT INTO schema_migrations (version) VALUES ('20211210185111');
 INSERT INTO schema_migrations (version) VALUES ('20211222175658');
 
 INSERT INTO schema_migrations (version) VALUES ('20211223202404');
+
+INSERT INTO schema_migrations (version) VALUES ('20220111203102');
 
 INSERT INTO schema_migrations (version) VALUES ('20220112210519');
 
