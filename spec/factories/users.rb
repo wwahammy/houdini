@@ -12,6 +12,9 @@ FactoryBot.define do
   end
 
   factory :user_as_nonprofit_admin, class: User do
+    transient do
+      nonprofit { create(:fv_poverty) }
+    end
     sequence(:email) {|i| "user#{i}@example.string.com"}
     password "whocares"
     roles {[
@@ -20,14 +23,21 @@ FactoryBot.define do
   end
 
   factory :user_as_nonprofit_associate, class: User do
+    transient do
+      nonprofit { create(:fv_poverty) }
+    end
+
     sequence(:email) {|i| "user#{i}@example.string.com"}
     password "whocares"
     roles {[
-      build(:role, name: 'nonprofit_associate', host: create(:fv_poverty))
+      build(:role, name: 'nonprofit_associate', host: nonprofit)
     ]}
   end
 
   factory :user_as_super_admin, class: User do
+    transient do
+      nonprofit { create(:fv_poverty) }
+    end
     sequence(:email) {|i| "user#{i}@example.string.com"}
     password "whocares"
     roles {[

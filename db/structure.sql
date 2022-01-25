@@ -2863,6 +2863,167 @@ ALTER SEQUENCE public.stripe_events_id_seq OWNED BY public.stripe_events.id;
 
 
 --
+-- Name: stripe_transaction_charges; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_transaction_charges (
+    id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: stripe_transaction_charges_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_transaction_charges_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_transaction_charges_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_transaction_charges_id_seq OWNED BY public.stripe_transaction_charges.id;
+
+
+--
+-- Name: stripe_transaction_dispute_reversals; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_transaction_dispute_reversals (
+    id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: stripe_transaction_dispute_reversals_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_transaction_dispute_reversals_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_transaction_dispute_reversals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_transaction_dispute_reversals_id_seq OWNED BY public.stripe_transaction_dispute_reversals.id;
+
+
+--
+-- Name: stripe_transaction_disputes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_transaction_disputes (
+    id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: stripe_transaction_disputes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_transaction_disputes_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_transaction_disputes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_transaction_disputes_id_seq OWNED BY public.stripe_transaction_disputes.id;
+
+
+--
+-- Name: stripe_transaction_refunds; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_transaction_refunds (
+    id integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: stripe_transaction_refunds_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_transaction_refunds_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_transaction_refunds_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_transaction_refunds_id_seq OWNED BY public.stripe_transaction_refunds.id;
+
+
+--
+-- Name: stripe_transactions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.stripe_transactions (
+    id integer NOT NULL,
+    amount integer NOT NULL,
+    houid character varying NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: stripe_transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.stripe_transactions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stripe_transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.stripe_transactions_id_seq OWNED BY public.stripe_transactions.id;
+
+
+--
 -- Name: subtransaction_payments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3962,6 +4123,41 @@ ALTER TABLE ONLY public.stripe_events ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
+-- Name: stripe_transaction_charges id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_charges ALTER COLUMN id SET DEFAULT nextval('public.stripe_transaction_charges_id_seq'::regclass);
+
+
+--
+-- Name: stripe_transaction_dispute_reversals id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_dispute_reversals ALTER COLUMN id SET DEFAULT nextval('public.stripe_transaction_dispute_reversals_id_seq'::regclass);
+
+
+--
+-- Name: stripe_transaction_disputes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_disputes ALTER COLUMN id SET DEFAULT nextval('public.stripe_transaction_disputes_id_seq'::regclass);
+
+
+--
+-- Name: stripe_transaction_refunds id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_refunds ALTER COLUMN id SET DEFAULT nextval('public.stripe_transaction_refunds_id_seq'::regclass);
+
+
+--
+-- Name: stripe_transactions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transactions ALTER COLUMN id SET DEFAULT nextval('public.stripe_transactions_id_seq'::regclass);
+
+
+--
 -- Name: subtransaction_payments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4659,6 +4855,46 @@ ALTER TABLE ONLY public.stripe_events
 
 
 --
+-- Name: stripe_transaction_charges stripe_transaction_charges_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_charges
+    ADD CONSTRAINT stripe_transaction_charges_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_transaction_dispute_reversals stripe_transaction_dispute_reversals_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_dispute_reversals
+    ADD CONSTRAINT stripe_transaction_dispute_reversals_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_transaction_disputes stripe_transaction_disputes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_disputes
+    ADD CONSTRAINT stripe_transaction_disputes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_transaction_refunds stripe_transaction_refunds_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transaction_refunds
+    ADD CONSTRAINT stripe_transaction_refunds_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stripe_transactions stripe_transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.stripe_transactions
+    ADD CONSTRAINT stripe_transactions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: subtransaction_payments subtransaction_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5350,6 +5586,41 @@ CREATE INDEX index_stripe_events_on_event_id ON public.stripe_events USING btree
 --
 
 CREATE INDEX index_stripe_events_on_object_id_and_event_time ON public.stripe_events USING btree (object_id, event_time);
+
+
+--
+-- Name: index_stripe_transaction_charges_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stripe_transaction_charges_on_houid ON public.stripe_transaction_charges USING btree (houid);
+
+
+--
+-- Name: index_stripe_transaction_dispute_reversals_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stripe_transaction_dispute_reversals_on_houid ON public.stripe_transaction_dispute_reversals USING btree (houid);
+
+
+--
+-- Name: index_stripe_transaction_disputes_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stripe_transaction_disputes_on_houid ON public.stripe_transaction_disputes USING btree (houid);
+
+
+--
+-- Name: index_stripe_transaction_refunds_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stripe_transaction_refunds_on_houid ON public.stripe_transaction_refunds USING btree (houid);
+
+
+--
+-- Name: index_stripe_transactions_on_houid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_stripe_transactions_on_houid ON public.stripe_transactions USING btree (houid);
 
 
 --
@@ -6798,4 +7069,6 @@ INSERT INTO schema_migrations (version) VALUES ('20211223202404');
 INSERT INTO schema_migrations (version) VALUES ('20220111203102');
 
 INSERT INTO schema_migrations (version) VALUES ('20220112210519');
+
+INSERT INTO schema_migrations (version) VALUES ('20220121194545');
 

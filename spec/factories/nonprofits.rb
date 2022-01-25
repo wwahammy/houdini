@@ -45,5 +45,6 @@ FactoryBot.define do
     slug { 'end-poverty-in-the-fox-valley-inc' }
     state_code_slug { 'wi'}
     city_slug { 'appleton'}
+    billing_subscription {build(:billing_subscription, billing_plan: build(:billing_plan_percentage_fee_of_2_5_percent_and_5_cents_flat))}
   end
 end
