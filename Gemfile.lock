@@ -569,8 +569,5 @@ DEPENDENCIES
   tunemygc
   webmock
 
-RUBY VERSION
-   ruby 2.5.9p229
-
 BUNDLED WITH
    1.17.3
