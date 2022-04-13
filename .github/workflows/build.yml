@@ -64,6 +64,10 @@ jobs:
           with:
             ruby-version: ${{ matrix.ruby }}
             bundler-cache: true
+        - name: set environment variables
+          uses: allenevans/set-env@v2.0.0
+          with:
+            CUSTOM_RUBY_VERSION: ${{ matrix.ruby }}
         - run: bin/setup
         - if: steps.changes.outputs.ruby == 'true'
           name: run spec
