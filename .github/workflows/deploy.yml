@@ -58,7 +58,7 @@ jobs:
         - name: "Push deploy"
           env:
             mode: ${{ github.event.inputs.mode }}
-            NewVersionTag: ${{ github.event.inputs.new_version_tag }}
+            NewVersionTag: ${{ github.event.inputs.version_tag }}
           run: |
 
             git add public -f 
