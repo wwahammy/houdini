@@ -4,8 +4,8 @@ class StripeDispute < ActiveRecord::Base
   TERMINAL_DISPUTE_STATUSES = ['won', 'lost']
 
   attr_accessible  :object, :stripe_dispute_id
-  has_one :dispute, primary_key: :stripe_dispute_id, foreign_key: :stripe_dispute_id
-  has_one :charge, primary_key: :stripe_charge_id, foreign_key: :stripe_charge_id
+  has_one :dispute, primary_key: :stripe_dispute_id, foreign_key: :stripe_dispute_id, validate: true
+  has_one :charge, primary_key: :stripe_charge_id, foreign_key: :stripe_charge_id, validate: true
   after_save :fire_change_events
 
   def object=(input)
@@ -135,6 +135,8 @@ class StripeDispute < ActiveRecord::Base
 
     transaction.dispute.original_payment.refund_total += gross_amount * -1
     transaction.dispute.original_payment.save!
+
+    transaction.dispute.original_payment.trx.process_dispute_withdrawal(dispute, transaction.payment)
     # notify folks of the withdrawal
     JobQueue.queue(JobTypes::DisputeFundsWithdrawnJob, dispute)
   end
@@ -156,6 +158,8 @@ class StripeDispute < ActiveRecord::Base
 
     transaction.dispute.original_payment.refund_total += gross_amount * -1
     transaction.dispute.original_payment.save!
+
+    transaction.dispute.original_payment.trx.process_dispute_reversal(dispute, transaction.payment)
     # add dispute payment activity
     transaction.payment.activities.create
     JobQueue.queue(JobTypes::DisputeFundsReinstatedJob, dispute)

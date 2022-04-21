@@ -66,6 +66,10 @@ describe 'transactions factories' do
       create_trx
       expect(OfflineTransactionCharge.count).to eq 1
     end
-    
+    # describe :with_payments do
+    #   create(:transaction_base, :with_payments, payment_descs: [
+    #     {:offline_transaction_base, :offline_transaction_charge, }
+    #   ])
+    # end
   end
 end

@@ -5,12 +5,12 @@
 class Subtransaction < ApplicationRecord
 	include Model::CreatedTimeable
 
-	belongs_to :trx, class_name: 'Transaction', foreign_key: 'transaction_id', inverse_of: :subtransaction
+	belongs_to :trx, class_name: 'Transaction', foreign_key: 'transaction_id', inverse_of: :subtransaction, required: true
 	has_one :supporter, through: :trx
 	has_one :nonprofit, through: :trx
 	delegate :currency, to: :nonprofit
 
-	belongs_to :subtransactable, polymorphic: true
+	belongs_to :subtransactable, polymorphic: true, required: true
 
 	has_many :subtransaction_payments, -> {  extending ModelExtensions::PaymentsExtension } # rubocop:disable Rails/HasManyOrHasOneDependent
 
@@ -21,7 +21,12 @@ class Subtransaction < ApplicationRecord
 
 	delegated_type :subtransactable, types: %w[OfflineTransaction, StripeTransaction]
 
-	delegate :to_houid, :process_refund, :publish_updated, to: :subtransactable
+	delegate :to_houid,
+		:process_dispute_withdrawal,
+		:process_dispute_reversal,
+		:process_refund, 
+		:publish_updated, 
+			to: :subtransactable
 
 	as_money :amount
 end

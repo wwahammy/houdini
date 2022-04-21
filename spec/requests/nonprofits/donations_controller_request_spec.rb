@@ -147,7 +147,6 @@ RSpec.describe Nonprofits::DonationsController, type: :request do
   end
 
   describe 'POST /create' do
-
     around(:each) do |ex|
        StripeMock.start
        ex.run

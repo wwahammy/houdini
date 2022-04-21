@@ -7,6 +7,7 @@ FactoryBot.define do
     nonprofit {supporter.nonprofit}
     amount {333}
   end
+  
 
   factory :fv_poverty_donation, class: 'Donation' do
     nonprofit {association  :fv_poverty}

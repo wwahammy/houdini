@@ -58,7 +58,6 @@ RSpec.describe ApiNew::TransactionsController, type: :request do
 				def base_url(nonprofit_id, transaction_id)
 					"http://www.example.com#{base_path(nonprofit_id, transaction_id)}"
 				end
-
 				it {
 					is_expected.to include_json(
 						first_page: true, 
