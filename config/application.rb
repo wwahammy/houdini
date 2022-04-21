@@ -16,10 +16,10 @@ module Commitchange
 
 		# Custom directories with classes and modules you want to be autoloadable.
 		# config.autoload_paths += %W(#{config.root}/extras)
+		#config.autoload_paths += config.root + File.join('app', 'legacy_lib')
+		#config.eager_load_paths += Dir["#{config.root}/lib/**/"]
 
-		config.eager_load_paths += Dir["#{config.root}/lib/**/"]
-
-		config.paths.add File.join('lib'), glob: File.join('**')
+		# config.paths.add File.join('lib'), glob: File.join('**')
 		config.paths.add File.join('app', 'api'), glob: File.join('**', '*.rb')
 		config.eager_load_paths += Dir[Rails.root.join('app', 'api', '*')]
 
@@ -99,5 +99,7 @@ module Commitchange
 		config.action_dispatch.default_headers = {
 			'X-XSS-Protection' => '1; mode=block'
 		}
+
+		config.active_job.queue_adapter = :delayed_job
 	end
 end

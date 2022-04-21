@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 describe PeriodicReportAdapter::FailedRecurringDonationsReport do
-  let(:nonprofit) { create(:fv_poverty) }
+  let(:nonprofit) { create(:nonprofit_base) }
   let(:user) { create(:user) }
   let(:users_list) { User.where(user_id: user) }
   let(:options) do
@@ -35,7 +35,7 @@ describe PeriodicReportAdapter::FailedRecurringDonationsReport do
   before do
     allow(ExportRecurringDonations)
       .to receive(:initiate_export)
-      .with(nonprofit.id, params, users_list, false)
+      .with(nonprofit.id, params, users_list, :failed_recurring_donations_automatic_report)
       .and_return(export_recurring_donations)
   end
 
@@ -43,6 +43,6 @@ describe PeriodicReportAdapter::FailedRecurringDonationsReport do
     subject
     expect(ExportRecurringDonations)
       .to have_received(:initiate_export)
-      .with(nonprofit.id, params, users_list, false)
+      .with(nonprofit.id, params, users_list, :failed_recurring_donations_automatic_report)
   end
 end

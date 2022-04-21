@@ -9,61 +9,6 @@ FactoryBot.define do
 
 
 	factory :transaction_base, class: "Transaction" do
-		# inherit_from_transaction
-		
-		# supporter { create :supporter_base }
-
-		# trait :receive_donation do
-		# 	transient do 
-		# 		donation { nil}
-		# 	end
-		# 	subtransaction { association :subtransaction_base, :receive_donation, gross_amount: amount, trx: @instance, donation: donation, subtransactable: build(:stripe_transaction_base, amount: amount)}
-		# 	transaction_assignments { [
-		# 		build(:transaction_assignment_base, :receive_donation, trx: @instance, donation: donation)]}
-		# end
-
-		# trait :generate_donation do
-		# 	transient do
-		# 		donation {create(:donation_base, :with_charge, amount: amount)}
-		# 	end
-		# 	subtransaction { 
-		# 	association :subtransaction_base, :receive_donation, gross_amount: amount, trx: @instance, donation: donation, subtransactable: build(:stripe_transaction_base, amount: amount)}
-		# 	transaction_assignments { [
-		# 		build(:transaction_assignment_base, :receive_donation, trx: @instance, donation: donation)]}
-		# end
-
-		# trait :inherit_from_transaction do
-		# 	subtransaction { association :subtransaction_base, gross_amount: amount, trx: @instance}
-		# 	transaction_assignments { [
-		# 		build(:transaction_assignment_base, trx: @instance)]}
-		# end
-
-		# trait :with_payments do
-		# 	transient do  
-		# 		payment_descs {
-		# 			[{props: [:subtransaction_payment_base], opts:{}}]
-		# 		}
-		# 		subtransaction { association :subtransaction_base, gross_amount: amount, trx: @instance, payment_descs: payment_descs}
-		# 	end
-
-		# end
-
-		# amount { 400 }
-
-		# trait :with_custom_assignments do
-		# 	transient do
-		# 		list_of_assignments do
-		# 			[{props: [:transaction_assignment_base], opts:{}}]
-		# 		end
-		# 	end
-		# 	transaction_assignments {
-		# 		list_of_assignments.map do |assign|
-		# 			build(*assign[:props],
-		# 			**assign[:opts],
-		# 			trx: @instance)
-		# 		end
-		# 	}
-		# end
 		transient do
 			legacy_donation { nil}
 			legacy_payment { legacy_donation.payments.first}
