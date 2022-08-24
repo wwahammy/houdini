@@ -15,6 +15,7 @@ on:
     types: [opened, reopened, synchronize]
   schedule:
     - cron: '37 15 * * 4'
+
 jobs:
   eslint:
     name: Run eslint scanning
