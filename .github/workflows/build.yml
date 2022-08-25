@@ -16,7 +16,7 @@ jobs:
           filters: .github/path-filters.yml
       - name: lint Markdown
         if: steps.filter.outputs.markdown == 'true'
-        run: npx markdownlint
+        run: yarn markdownlint
     
 
   
