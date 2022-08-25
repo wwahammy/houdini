@@ -14,6 +14,7 @@ nonprofit name in slug format.
 > More logic to the naming is applied when there is an entity with the same
 > name. Read further on
 > [SlugCopyNamingAlgorithm](https://github.com/houdiniproject/houdini/blob/main/lib/slug_copy_naming_algorithm.rb).
+sareta
 
 <!-- markdownlint-disable MD013 -->
 | Path description | Default Rails URL | Friendly URL |
