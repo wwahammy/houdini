@@ -13,7 +13,7 @@ jobs:
         id: filter
         with:
           # Path to file where filters are defined
-          filters: .github/filters.yaml
+          filters: .github/path-filters.yml
       - name: lint Markdown
         if: steps.filter.outputs.markdown == 'true'
         run: npx markdownlint
