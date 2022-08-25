@@ -7,7 +7,7 @@ import type {Meta, Story} from '@storybook/react';
  */
 export function defaultStoryExport<TArgType>(args: Meta<TArgType>):  Meta<TArgType> {
 	return args;
-}
+}  
 
 export class StoryTemplate<TemplateArgs> {
 
