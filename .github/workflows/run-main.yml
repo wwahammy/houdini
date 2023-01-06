@@ -14,8 +14,6 @@ env:
 jobs:
   npm-package-download: # this downloads and caches all of the packages. That way if a future job fails, the caching will still occur
       name: Download and cache any npm packages
-      needs: changes
-      if: ${{ contains(needs.changes.outputs.filters, 'build-js') }}
       runs-on: ${{ matrix.os }}
       strategy:
         matrix:
@@ -31,8 +29,6 @@ jobs:
   
   gem-package-download: # this downloads and caches all of the packages. That way if a future job fails, the caching will still occur
     name: Download and cache any gem packages
-    needs: changes
-    if: ${{ contains(needs.changes.outputs.filters, 'build-ruby') }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
